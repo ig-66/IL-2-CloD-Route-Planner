@@ -1,7 +1,7 @@
 
 import React, { useRef, useEffect } from 'react';
 
-const Route = ({p_position, p_zoom_scale, p_clickList, p_legs}) => {
+const Route = ({p_position, p_zoom_scale, p_clickList, p_legs, p_mapRatio}) => {
 	
 	var position = p_position
 	var zoom = p_zoom_scale

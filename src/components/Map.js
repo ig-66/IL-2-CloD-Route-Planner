@@ -4,14 +4,44 @@ import map_channel from '../assets/maps/map_channel.jpg'
 import React, { useState, useEffect, useRef } from 'react';
 import Route from './Route';
 
-const Map = () => {
+
+const Map = ({ p_map }) => {
+	// Map ratios. Those are given in px/km
+	const MAP_RATIOS = { channel: 13.7338063, tobruk: 26.284864 };
+
 	const [isDragging, setIsDragging] = useState(false);
-	const [position, setPosition] = useState({ x: 0, y: 0});
+	const [position, setPosition] = useState({ x: -800, y: -300 });
 	const [offset, setOffset] = useState({ x: 0, y: 0 });
-	const [zoom, setZoom] = useState(1);
+	const [zoom, setZoom] = useState(0.5);
 	const [legs, setLegs] = useState([]);
 	const [clickList, setClickList] = useState([]);
+
+	const [map, setMap] = useState(map_channel)
+	const [mapRatio, setMapRatio] = useState(MAP_RATIOS.channel)
+	
 	const canvasRef = useRef(null);
+
+	useEffect(() => {
+		console.log(`Map.js > New Map selected: ${p_map}`);
+		if (p_map === 'channel')
+		{
+			setMapRatio(MAP_RATIOS.channel)
+			setMap(map_channel)
+			setPosition({x:-800, y:-300})
+			setZoom(0.5)
+		} 
+		else 
+		{
+			setMapRatio(MAP_RATIOS.tobruk)
+			setPosition({x:-150, y:-650})
+			setMap(map_tobruk)
+			setZoom(0.2)
+		}
+
+		setClickList([])
+		setLegs([])
+
+	}, [p_map])
 
 	const handleMouseDown = (e) => {
 		e.preventDefault(); 
@@ -87,7 +117,13 @@ const Map = () => {
 
 		// Calculate the zoom change
 		const zoomChange = e.deltaY < 0 ? 0.1 : -0.1;
-		const newZoom = Math.max(0.25, Math.min(zoom + zoomChange, 3)); // Limit zoom between 0.5 and 3
+
+		var newZoom;
+
+		if (p_map === 'tobruk')
+			newZoom = Math.max(0.15, Math.min(zoom + zoomChange, 3));
+		else
+			newZoom = Math.max(0.25, Math.min(zoom + zoomChange, 3));
 
 		// Calculate the new position to keep the image centered around the mouse pointer
 		const newX = position.x - mouseX * (newZoom / zoom - 1);
@@ -102,7 +138,7 @@ const Map = () => {
 			style={{
 				width: '100vw',
 				height: '100vh',
-				position: 'relative',
+				position: 'absolute',
 				overflow: 'hidden',
 			}}
 			onMouseMove={handleMouseMove}
@@ -112,12 +148,12 @@ const Map = () => {
 			onContextMenu={(e) => e.preventDefault()}
 			>
 			<img
-				src={map_channel}
+				src={map}
 				alt="draggable"
 				onMouseDown={handleMouseDown}
 				onDragStart={(e) => e.preventDefault()}
 				style={{
-					position: 'absolute',
+					position: 'relative',
 					left: `${position.x}px`,
 					top: `${position.y}px`,
 					transform: `scale(${zoom})`,
@@ -125,7 +161,7 @@ const Map = () => {
 					cursor: isDragging ? 'grabbing' : 'grab',
 				}}
 			/>
-			<Route p_position={position} p_zoom_scale={zoom} p_legs={legs} p_clickList={clickList} />
+			<Route p_position={position} p_zoom_scale={zoom} p_legs={legs} p_clickList={clickList} p_mapRatio={mapRatio}/>
 		</div>
 	);
 };
