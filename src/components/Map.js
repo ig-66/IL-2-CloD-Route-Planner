@@ -13,8 +13,8 @@ const Map = ({ p_map }) => {
 	const [position, setPosition] = useState({ x: -800, y: -300 });
 	const [offset, setOffset] = useState({ x: 0, y: 0 });
 	const [zoom, setZoom] = useState(0.5);
-	const [legs, setLegs] = useState([]);
-	const [clickList, setClickList] = useState([]);
+	const [flightLegs, setFlightLegs] = useState([]);
+	const [waypoints, setWaypoints] = useState([]);
 
 	const [map, setMap] = useState(map_channel)
 	const [mapRatio, setMapRatio] = useState(MAP_RATIOS.channel)
@@ -22,7 +22,6 @@ const Map = ({ p_map }) => {
 	const canvasRef = useRef(null);
 
 	useEffect(() => {
-		console.log(`Map.js > New Map selected: ${p_map}`);
 		if (p_map === 'channel')
 		{
 			setMapRatio(MAP_RATIOS.channel)
@@ -38,8 +37,8 @@ const Map = ({ p_map }) => {
 			setZoom(0.2)
 		}
 
-		setClickList([])
-		setLegs([])
+		setWaypoints([])
+		setFlightLegs([])
 
 	}, [p_map])
 
@@ -57,14 +56,14 @@ const Map = ({ p_map }) => {
 		}
 		else if (e.button === 1) // MMB
 		{
-			if (legs.length === 1)
-				setClickList([]);
+			if (flightLegs.length === 1)
+				setWaypoints([]);
 
-			if (legs.length > 0)
-				setLegs((prevLegs) => [...prevLegs.slice(0, -1)]);
+			if (flightLegs.length > 0)
+				setFlightLegs((prevLegs) => [...prevLegs.slice(0, -1)]);
 
-			if (clickList.length > 0)
-				setClickList((prevClickList) => [...prevClickList.slice(0, -1)]);
+			if (waypoints.length > 0)
+				setWaypoints((prevClickList) => [...prevClickList.slice(0, -1)]);
 		}
 		else if (e.button === 2) // RMB
 		{
@@ -73,7 +72,7 @@ const Map = ({ p_map }) => {
 				y: (e.clientY - position.y) / zoom 
 			};
 
-			const newClickList = [...clickList, newClick];
+			const newClickList = [...waypoints, newClick];
 
 			if (newClickList.length >= 2)
 			{
@@ -83,10 +82,10 @@ const Map = ({ p_map }) => {
 					x1: newClickList[newClickList.length - 1].x,
 					y1: newClickList[newClickList.length - 1].y,
 				}
-				setLegs((prevLegs) => [...prevLegs, newLeg]);
+				setFlightLegs((prevLegs) => [...prevLegs, newLeg]);
 			}
 
-			setClickList(newClickList);
+			setWaypoints(newClickList);
 		}	
 		else 
 			return;
@@ -161,7 +160,7 @@ const Map = ({ p_map }) => {
 					cursor: isDragging ? 'grabbing' : 'grab',
 				}}
 			/>
-			<Route p_position={position} p_zoom_scale={zoom} p_legs={legs} p_clickList={clickList} p_mapRatio={mapRatio}/>
+			<Route p_position={position} p_zoomScale={zoom} p_flightLegs={flightLegs} p_waypoints={waypoints} p_mapRatio={mapRatio}/>
 		</div>
 	);
 };

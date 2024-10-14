@@ -1,12 +1,12 @@
 
 import React, { useRef, useEffect } from 'react';
 
-const Route = ({p_position, p_zoom_scale, p_clickList, p_legs, p_mapRatio}) => {
+const Route = ({p_position, p_zoomScale, p_waypoints, p_flightLegs, p_mapRatio}) => {
 	
 	var position = p_position
-	var zoom = p_zoom_scale
-	var clickList = [...p_clickList]
-	var legList = [...p_legs]
+	var zoom = p_zoomScale
+	var waypoints = [...p_waypoints]
+	var flightLegs = [...p_flightLegs]
 
 	const canvasRef = useRef(null);
 
@@ -19,7 +19,7 @@ const Route = ({p_position, p_zoom_scale, p_clickList, p_legs, p_mapRatio}) => {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 		// Loop through arrows array and draw each arrow
-		legList.forEach(({ x0, y0, x1, y1 }) => {
+		flightLegs.forEach(({ x0, y0, x1, y1 }) => {
 			const scaledX0 = position.x + x0 * zoom;
 			const scaledY0 = position.y + y0 * zoom;
 			const scaledX1 = position.x + x1 * zoom;
@@ -52,7 +52,7 @@ const Route = ({p_position, p_zoom_scale, p_clickList, p_legs, p_mapRatio}) => {
 
 	useEffect(() => {
 		drawArrows();
-	}, [legList, clickList]);
+	}, [flightLegs]);
 
 	return (
 		<div>

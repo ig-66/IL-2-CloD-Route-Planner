@@ -9,7 +9,6 @@ const Header = ({ onMapSelect }) => {
 	};
 
 	useEffect(() => {
-		console.log(`Header.js > New map selected: ${newMap}`)
 		onMapSelect(newMap)
 	}, [newMap])
 
