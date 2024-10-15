@@ -5,11 +5,12 @@ import Map from './components/Map';
 
 function App() {
 	const [map, selectMap] = useState('channel');
+	const [unit, selectUnit] = useState('metric');
 
 	return (
 		<div className="App">
-			<Header onMapSelect={selectMap}/>
-			<Map p_map={map}/>
+			<Header onMapSelect={selectMap} onUnitSelect={selectUnit}/>
+			<Map p_map={map} p_unit={unit}/>
 		</div>
 	);
 }

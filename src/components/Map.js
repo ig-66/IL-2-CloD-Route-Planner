@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Route from './Route';
 
 
-const Map = ({ p_map }) => {
+const Map = ({ p_map, p_unit }) => {
 	// Map ratios. Those are given in px/km
 	const MAP_RATIOS = { channel: 13.7338063, tobruk: 26.284864 };
 
@@ -160,7 +160,7 @@ const Map = ({ p_map }) => {
 					cursor: isDragging ? 'grabbing' : 'grab',
 				}}
 			/>
-			<Route p_position={position} p_zoomScale={zoom} p_flightLegs={flightLegs} p_waypoints={waypoints} p_mapRatio={mapRatio}/>
+			<Route p_position={position} p_zoomScale={zoom} p_flightLegs={flightLegs} p_waypoints={waypoints} p_mapRatio={mapRatio} p_unit={p_unit}/>
 		</div>
 	);
 };
