@@ -22,9 +22,9 @@ const Route = ({ p_waypoints, p_flightLegs }) => {
 			drawWaypoint(ctx, waypoints[0].x, waypoints[0].y, 5);
 
 		// Loop through flight legs and draw each arrow, along with watpoints
-		flightLegs.forEach(({ x0, y0, x1, y1 }, index) => {
-			drawArrow(ctx, x0, y0, x1, y1);
-			drawWaypoint(ctx, x1, y1, 5);
+		flightLegs.forEach((leg) => {
+			drawArrow(ctx, leg.coord.x0, leg.coord.y0, leg.coord.x1, leg.coord.y1);
+			drawWaypoint(ctx, leg.coord.x1, leg.coord.y1, 5);
 		});
 	};
 

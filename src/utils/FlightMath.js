@@ -1,10 +1,16 @@
-function getLegDistance(x0, y0, x1, y1, mapRatio) {
+function getLegDistance(x0, y0, x1, y1, mapRatio, p_unit) {
 
 	const legPixelSize = Math.sqrt(Math.pow(x1 - x0, 2) + Math.pow(y1 - y0, 2));
 
 	const legDistanceKm = convertPixelsToKm(legPixelSize, mapRatio);
 
-	return legDistanceKm;
+	var legDistance;
+	if (p_unit == 'km')
+		legDistance = legDistanceKm;
+	else 
+		legDistance = legDistanceKm / 1.60934
+
+	return legDistance;
 }
 
 function convertPixelsToKm(pixels, mapRatio) {
@@ -32,22 +38,16 @@ function getLegTimeSeconds(distance, speed) {
 function getLegTimeString(distance, speed) {
 	const legTimeSeconds = getLegTimeSeconds(distance, speed);
 
-	var minutes = legTimeSeconds/60;
-	var seconds = legTimeSeconds - minutes*legTimeSeconds;
+	const hours = Math.floor(legTimeSeconds / 3600);
+	const minutes = Math.floor((legTimeSeconds % 3600) / 60);
+	const seconds = Math.floor(legTimeSeconds % 60);
 
-	var hours = 0;
-	if (minutes >= 60)
-	{
-		minutes = minutes - 60;
-		hours = minutes / 60;
-		minutes = minutes - hours*60;
+	let legTimeString;
+	if (hours > 0) {
+		legTimeString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+	} else {
+		legTimeString = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 	}
-
-	var legTimeString;
-	if (hours >= 1)
-		legTimeString = `${hours.toPrecision(2)}:${minutes.toPrecision(2)}:${seconds.toPrecision(2)}`;
-	else 
-		legTimeString = `${minutes.toPrecision(2)}:${seconds.toPrecision(2)}`;
 
 	return legTimeString;
 }

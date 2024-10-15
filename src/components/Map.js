@@ -3,28 +3,33 @@ import map_channel from '../assets/maps/map_channel.jpg'
 
 import React, { useState, useEffect, useRef } from 'react';
 import Route from './Route';
+import FlightMath from '../utils/FlightMath';
 
-const Map = ({ p_map, onNewWaypoints, onNewFlightLegs }) => {
+const Map = ({ p_map, p_unit, p_flightLegs, p_speedList, p_baseSpeed, p_speedUnit, onNewWaypoints, onNewFlightLegs }) => {
+	const MAP_RATIOS = { channel: 13.7338063, tobruk: 26.284864 };
 
 	const [isDragging, setIsDragging] = useState(false);
 	const [position, setPosition] = useState({ x: -800, y: -300 });
 	const [offset, setOffset] = useState({ x: 0, y: 0 });
 	const [zoom, setZoom] = useState(0.5);
-	const [flightLegs, setFlightLegs] = useState([]);
+	const [flightLegs, setFlightLegs] = useState([...p_flightLegs]);
 	const [waypoints, setWaypoints] = useState([]);
 	const [transformedWP, setTransformedWP] = useState([]);
+	const [mapRatio, setMapRatio] = useState(MAP_RATIOS.channel);
 
 	const [map, setMap] = useState(map_channel)
 	
 	useEffect(() => {
 		if (p_map === 'channel')
 		{
+			setMapRatio(MAP_RATIOS.channel);
 			setMap(map_channel)
 			setPosition({x:-800, y:-300})
 			setZoom(0.5)
 		} 
 		else 
 		{
+			setMapRatio(MAP_RATIOS.tobruk);
 			setPosition({x:-150, y:-650})
 			setMap(map_tobruk)
 			setZoom(0.2)
@@ -51,12 +56,33 @@ const Map = ({ p_map, onNewWaypoints, onNewFlightLegs }) => {
 				else 
 				{
 					let lastWP = transformedWaypoints[index-1];
+
+					let legHeading = FlightMath.getLegHeading(lastWP.x, lastWP.y, x, y);
+
+					let legDistance = FlightMath.getLegDistance(lastWP.x/zoom, lastWP.y/zoom, x/zoom, y/zoom,  mapRatio, p_unit);
 					
-					let newLeg = {						
+					// let legSpeed;
+					// if (flightLegs.length < 1)
+					// 	legSpeed = p_baseSpeed;
+					// else 
+					// 	legSpeed = flightLegs[index-1].speed ?? p_baseSpeed;
+
+					let legSpeed = p_baseSpeed;
+
+					let legTime = FlightMath.getLegTimeString(legDistance, legSpeed)
+
+					let newLeg = {
+						coord: 
+						{
 							x0: lastWP.x,
 							y0: lastWP.y,
 							x1: x,
 							y1: y
+						},		
+						heading: legHeading,
+						distance: legDistance,
+						speed: legSpeed,
+						time: legTime,
 					}
 
 					legs = [...legs, newLeg];
@@ -65,10 +91,10 @@ const Map = ({ p_map, onNewWaypoints, onNewFlightLegs }) => {
 		} 
 		
 		setTransformedWP([...transformedWaypoints]);
-		setFlightLegs(legs);
+		setFlightLegs([...legs]);
 
 		onNewWaypoints(transformedWaypoints);
-	}, [waypoints, position, zoom]);
+	}, [waypoints, position, zoom, p_speedList, p_speedUnit, p_unit, p_baseSpeed]);
 
 	useEffect(() => {
 		onNewFlightLegs([...flightLegs])
