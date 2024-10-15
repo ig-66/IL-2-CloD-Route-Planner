@@ -1,19 +1,14 @@
 import React, { useRef, useEffect } from 'react';
-import FlightMath from '../utils/FlightMath';
 
-const Route = ({ p_position, p_zoomScale, p_waypoints, p_flightLegs, p_mapRatio, p_unit }) => {
-	const position = p_position;
-	const zoom = p_zoomScale;
+const Route = ({ p_waypoints, p_flightLegs }) => {
 	const waypoints = [...p_waypoints];
 	const flightLegs = [...p_flightLegs];
 
 	const canvasRef = useRef(null);
 
-	var headings = [];
-
 	useEffect(() => {
-		console.log(`Route.js > Unit: ${p_unit}`);
-	}, [p_unit]);
+		drawFlightLegs();
+	}, [waypoints, flightLegs]);
 
 	const drawFlightLegs = () => {
 		const canvas = canvasRef.current;
@@ -24,35 +19,16 @@ const Route = ({ p_position, p_zoomScale, p_waypoints, p_flightLegs, p_mapRatio,
 
 		// Draw the first waypoint separatel
 		if (waypoints.length >= 1)
-		{
-			const scaledX = position.x + waypoints[0].x * zoom;
-			const scaledY = position.y + waypoints[0].y * zoom;
-			drawWaypoint(ctx, scaledX, scaledY, 5, `0`);
-		}
+			drawWaypoint(ctx, waypoints[0].x, waypoints[0].y, 5);
 
 		// Loop through flight legs and draw each arrow, along with watpoints
 		flightLegs.forEach(({ x0, y0, x1, y1 }, index) => {
-			const scaledX0 = position.x + x0 * zoom;
-			const scaledY0 = position.y + y0 * zoom;
-			const scaledX1 = position.x + x1 * zoom;
-			const scaledY1 = position.y + y1 * zoom;
-
-			drawArrow(ctx, scaledX0, scaledY0, scaledX1, scaledY1);
-
-			var legDistance = FlightMath.getLegDistance(x0, y0, x1, y1, p_mapRatio);
-			var legHeading = FlightMath.getLegHeading(x0, y0, x1, y1);
-			
-			var waypointText;
-			if (p_unit == 'metric')
-				waypointText = `${index+1}\n${legHeading.toFixed(0)}°\n${legDistance.toFixed(0)} km`; 
-			else
-				waypointText = `${index+1}\n${legHeading.toFixed(0)}°\n${(legDistance/1.60934).toFixed(0)} mi`; 
-
-			drawWaypoint(ctx, scaledX1, scaledY1, 5, `${waypointText}`);
+			drawArrow(ctx, x0, y0, x1, y1);
+			drawWaypoint(ctx, x1, y1, 5);
 		});
 	};
 
-	const drawWaypoint = (ctx, x, y, radius, text) => {
+	const drawWaypoint = (ctx, x, y, radius) => {
 		// Draw the circle
 		ctx.beginPath();
 		ctx.arc(x, y, radius, 0, 2 * Math.PI);
@@ -61,30 +37,6 @@ const Route = ({ p_position, p_zoomScale, p_waypoints, p_flightLegs, p_mapRatio,
 		ctx.lineWidth = 2;
 		ctx.strokeStyle = 'blue';
 		ctx.stroke();
-
-		drawWaypointLabel(ctx, x, y, text)
-	};
-
-	const drawWaypointLabel = (ctx, x, y, text) => {
-		const lines = text.split('\n'); // Split the text by new line character
-		const textHeight = 14; // Approximate text height for each line
-		const padding = 3;
-		const radius = 5;
-
-		// Calculate the width of the longest line for the background rectangle
-		const maxWidth = Math.max(...lines.map(line => ctx.measureText(line).width));
-
-		// Draw the background rectangle for the text
-		ctx.fillStyle = 'white';
-		ctx.fillRect(x - maxWidth / 2 - padding, y + radius + 5, maxWidth + 2 * padding, textHeight * lines.length);
-		ctx.strokeStyle = 'black';
-		ctx.strokeRect(x - maxWidth / 2 - padding, y + radius + 5, maxWidth + 2 * padding, textHeight * lines.length);
-
-		// Draw each line of text
-		ctx.fillStyle = 'black';
-		lines.forEach((line, index) => {
-			ctx.fillText(line, x - ctx.measureText(line).width / 2, y + radius + 5 + textHeight * (index + 1) - 4);
-		});
 	};
 
 	const drawArrow = (ctx, x0, y0, x1, y1) => {
@@ -108,10 +60,6 @@ const Route = ({ p_position, p_zoomScale, p_waypoints, p_flightLegs, p_mapRatio,
 		ctx.fillStyle = 'red';
 		ctx.fill();
 	};
-
-	useEffect(() => {
-		drawFlightLegs();
-	}, [p_position, p_zoomScale, p_waypoints, p_flightLegs, p_unit]);
 
 	return (
 		<div>

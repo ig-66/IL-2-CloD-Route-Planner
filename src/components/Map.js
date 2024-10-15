@@ -4,10 +4,7 @@ import map_channel from '../assets/maps/map_channel.jpg'
 import React, { useState, useEffect, useRef } from 'react';
 import Route from './Route';
 
-
-const Map = ({ p_map, p_unit }) => {
-	// Map ratios. Those are given in px/km
-	const MAP_RATIOS = { channel: 13.7338063, tobruk: 26.284864 };
+const Map = ({ p_map, onNewWaypoints, onNewFlightLegs }) => {
 
 	const [isDragging, setIsDragging] = useState(false);
 	const [position, setPosition] = useState({ x: -800, y: -300 });
@@ -15,23 +12,19 @@ const Map = ({ p_map, p_unit }) => {
 	const [zoom, setZoom] = useState(0.5);
 	const [flightLegs, setFlightLegs] = useState([]);
 	const [waypoints, setWaypoints] = useState([]);
+	const [transformedWP, setTransformedWP] = useState([]);
 
 	const [map, setMap] = useState(map_channel)
-	const [mapRatio, setMapRatio] = useState(MAP_RATIOS.channel)
 	
-	const canvasRef = useRef(null);
-
 	useEffect(() => {
 		if (p_map === 'channel')
 		{
-			setMapRatio(MAP_RATIOS.channel)
 			setMap(map_channel)
 			setPosition({x:-800, y:-300})
 			setZoom(0.5)
 		} 
 		else 
 		{
-			setMapRatio(MAP_RATIOS.tobruk)
 			setPosition({x:-150, y:-650})
 			setMap(map_tobruk)
 			setZoom(0.2)
@@ -40,14 +33,51 @@ const Map = ({ p_map, p_unit }) => {
 		setWaypoints([])
 		setFlightLegs([])
 
-	}, [p_map])
+	}, [p_map]);
+
+	// Update waypoint positions in window coordinates
+	useEffect(() => {
+		const transformedWaypoints = waypoints.map(({ x, y }) => ({
+			x: position.x + x * zoom,
+			y: position.y + y * zoom,
+		}));
+
+		var legs = [];
+
+		if (transformedWaypoints.length > 1){
+			transformedWaypoints.forEach(({x, y}, index) => {
+				if (index == 0)
+					;// nothing
+				else 
+				{
+					let lastWP = transformedWaypoints[index-1];
+					
+					let newLeg = {						
+							x0: lastWP.x,
+							y0: lastWP.y,
+							x1: x,
+							y1: y
+					}
+
+					legs = [...legs, newLeg];
+				}
+			})
+		} 
+		
+		setTransformedWP([...transformedWaypoints]);
+		setFlightLegs(legs);
+
+		onNewWaypoints(transformedWaypoints);
+	}, [waypoints, position, zoom]);
+
+	useEffect(() => {
+		onNewFlightLegs([...flightLegs])
+	}, [flightLegs])
 
 	const handleMouseDown = (e) => {
-		e.preventDefault(); 
+		e.preventDefault();
 
-		if (e.button === 0) // LMB
-		{
-			// Calculate the offset of the click relative to the image's current position
+		if (e.button === 0) { // Left mouse button
 			const offsetX = e.clientX - position.x;
 			const offsetY = e.clientY - position.y;
 	
@@ -59,9 +89,6 @@ const Map = ({ p_map, p_unit }) => {
 			if (flightLegs.length === 1)
 				setWaypoints([]);
 
-			if (flightLegs.length > 0)
-				setFlightLegs((prevLegs) => [...prevLegs.slice(0, -1)]);
-
 			if (waypoints.length > 0)
 				setWaypoints((prevClickList) => [...prevClickList.slice(0, -1)]);
 		}
@@ -69,38 +96,19 @@ const Map = ({ p_map, p_unit }) => {
 		{
 			const newClick = {
 				x: (e.clientX - position.x) / zoom,
-				y: (e.clientY - position.y) / zoom 
+				y: (e.clientY - position.y) / zoom
 			};
 
-			const newClickList = [...waypoints, newClick];
-
-			if (newClickList.length >= 2)
-			{
-				var newLeg = { 
-					x0: newClickList[newClickList.length - 2].x,
-					y0: newClickList[newClickList.length - 2].y,
-					x1: newClickList[newClickList.length - 1].x,
-					y1: newClickList[newClickList.length - 1].y,
-				}
-				setFlightLegs((prevLegs) => [...prevLegs, newLeg]);
-			}
-
-			setWaypoints(newClickList);
-		}	
-		else 
-			return;
-	};
+			setWaypoints([...waypoints, newClick]);
+		}
+	}
 
 	const handleMouseMove = (e) => {
 		if (!isDragging) return;
 
 		const newX = e.clientX - offset.x;
 		const newY = e.clientY - offset.y;
-
-		setPosition({
-			x: newX,
-			y: newY,
-		});
+		setPosition({ x: newX, y: newY });
 	};
 
 	const handleMouseUp = () => {
@@ -145,7 +153,7 @@ const Map = ({ p_map, p_unit }) => {
 			onMouseLeave={handleMouseUp}
 			onWheel={handleWheel}
 			onContextMenu={(e) => e.preventDefault()}
-			>
+		>
 			<img
 				src={map}
 				alt="draggable"
@@ -156,11 +164,11 @@ const Map = ({ p_map, p_unit }) => {
 					left: `${position.x}px`,
 					top: `${position.y}px`,
 					transform: `scale(${zoom})`,
-					transformOrigin: '0 0', // Set the origin to top-left (0,0) for custom zoom
+					transformOrigin: '0 0',
 					cursor: isDragging ? 'grabbing' : 'grab',
 				}}
 			/>
-			<Route p_position={position} p_zoomScale={zoom} p_flightLegs={flightLegs} p_waypoints={waypoints} p_mapRatio={mapRatio} p_unit={p_unit}/>
+			<Route p_flightLegs={flightLegs} p_waypoints={transformedWP}/>
 		</div>
 	);
 };
