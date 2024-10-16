@@ -1,21 +1,50 @@
 {
   "name": "il2_clod_route_planner",
+  "productName": "IL-2 CloD Route Planner",
+  "author": "Igor J. Langer",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@electron/remote": "^2.1.2",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "concurrently": "^9.0.1",
+    "cross-env": "^7.0.3",
+    "electron-is-dev": "^3.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-scripts": "5.0.1",
+    "wait-on": "^8.0.1",
     "web-vitals": "^2.1.4"
   },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8"
+  },
+  "main": "public/main.js",
+  "homepage": "./",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "electron:serve": "concurrently -k \"cross-env BROWSER=none yarn start\" \"yarn electron:start\"",
+    "electron:build": "yarn build && electron-builder -c.extraMetadata.main=build/main.js",
+    "electron:start": "electron ."
+  },
+  "build": {
+    "extends": null,
+    "appId": "com.ig.routeplanner",
+    "files": [
+      "dist/**/*",
+      "build/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "buildResources": "build"
+    }
   },
   "eslintConfig": {
     "extends": [
