@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'; // Importing Modules
+import React, { useState } from 'react'; // Importing Modules
 
 const Header = ({ onMapSelect, onDistanceUnitSelect, onSpeedChange }) => {
 
@@ -14,7 +14,7 @@ const Header = ({ onMapSelect, onDistanceUnitSelect, onSpeedChange }) => {
 	const handleUnitChange = (event) => {
 		let newUnit = event.target.value;
 
-		if (newUnit == 'km')
+		if (newUnit === 'km')
 		{
 			let newSpeed = speed * 1.60934;
 			setSpeed(newSpeed);

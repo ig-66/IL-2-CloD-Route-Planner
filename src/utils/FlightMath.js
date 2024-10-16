@@ -5,7 +5,7 @@ function getLegDistance(x0, y0, x1, y1, mapRatio, p_unit) {
 	const legDistanceKm = convertPixelsToKm(legPixelSize, mapRatio);
 
 	var legDistance;
-	if (p_unit == 'km')
+	if (p_unit === 'km')
 		legDistance = legDistanceKm;
 	else 
 		legDistance = legDistanceKm / 1.60934

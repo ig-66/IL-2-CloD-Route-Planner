@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 const Waypoints = ({ p_waypoints, p_flightLegs, p_distanceUnit }) => {
 

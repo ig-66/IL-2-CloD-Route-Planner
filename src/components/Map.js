@@ -1,7 +1,7 @@
 import map_tobruk from '../assets/maps/map_tobruk.jpg'
 import map_channel from '../assets/maps/map_channel.jpg'
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Route from './Route';
 import FlightMath from '../utils/FlightMath';
 
@@ -51,7 +51,7 @@ const Map = ({ p_map, p_unit, p_flightLegs, p_speedList, p_baseSpeed, p_speedUni
 
 		if (transformedWaypoints.length > 1){
 			transformedWaypoints.forEach(({x, y}, index) => {
-				if (index == 0)
+				if (index === 0)
 					;// nothing
 				else 
 				{
