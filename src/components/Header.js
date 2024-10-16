@@ -37,16 +37,16 @@ const Header = ({ onMapSelect, onDistanceUnitSelect, onSpeedChange }) => {
 	}
 
 	return (
-		<header style={{position:'absolute', zIndex:15, padding: 5}}>
+		<header style={{ position: 'absolute', zIndex: 15, backgroundColor: 'white', padding: 7, borderRadius: '0 0 10px 0' }}>
 			<select value={map} onChange={handleMapChange}>
 				<option value="channel">Channel</option>
 				<option value="tobruk">Tobruk</option>
 			</select>
-			<select value={unit} onChange={handleUnitChange}>
+			<select value={unit} onChange={handleUnitChange} style={{ marginInline: '7px' }}>
 				<option value="km">Metric</option>
 				<option value="mi">Imperial</option>
 			</select>
-			<label style={{backgroundColor:'white'}}>{unit === 'km' ? 'Speed (kph):' : 'Speed (mph):'}</label>
+			<label style={{paddingLeft: 10, paddingRight: 4}}>{unit === 'km' ? 'Speed (km/h):' : 'Speed (mph):'}</label>
 			<input
 				type="number"
 				id="numberInput"
