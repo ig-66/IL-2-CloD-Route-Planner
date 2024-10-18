@@ -43,7 +43,7 @@
       "package.json"
     ],
     "directories": {
-      "buildResources": "build"
+      "buildResources": "public"
     }
   },
   "eslintConfig": {
