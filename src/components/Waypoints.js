@@ -1,4 +1,5 @@
 import React from "react";
+import AppStyle from '../AppStyle.js';
 
 const Waypoints = ({ p_waypoints, p_flightLegs, p_distanceUnit }) => {
 
@@ -19,25 +20,19 @@ const Waypoints = ({ p_waypoints, p_flightLegs, p_distanceUnit }) => {
 	// }
 
 	return (
-		<div style={{ position: 'absolute', height: '100vh', width: '100vw', pointerEvents: 'none',overflow: 'hidden'}}>
+		<div style={AppStyle.nonInteractableFullscreenComp}>
 			{p_flightLegs.map((leg, index) => (
 				<div
 					key={index}
+					className="Label"
 					style={{
-						position: 'absolute',
+						... AppStyle.label,
 						left: leg.coord.x1,
 						top: leg.coord.y1,
-						backgroundColor: 'white',
-						padding: '4px 8px',
-						borderRadius: '4px',
 						transform: 'translate(-50%, 15%)',
-						pointerEvents: 'none',
-						whiteSpace: 'nowrap',
-						zIndex: 10,
-						fontSize: 10,
 					}}
 				>
-					<a>{index + 1}</a><br/>
+					<a style={{ fontWeight: 'bold' }}>{index + 1}</a><br/>
 					<a>{Math.round(leg.heading) + '°'}</a><br/>
 					<a>{Math.round(leg.distance) + ' ' + p_distanceUnit}</a><br/>
 					<a>{`${Math.round(leg.speed)} ${p_distanceUnit === 'km' ? 'km/h' : 'mph'}`}</a><br/>

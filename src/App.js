@@ -3,6 +3,7 @@ import './App.css';
 import Header from './components/Header';
 import Map from './components/Map';
 import Waypoints from './components/Waypoints';
+import Keybinds from './components/Keybinds';
 
 function App() {
 	const [map, selectMap] = useState('channel');
@@ -25,6 +26,7 @@ function App() {
 	return (
 		<div className="App">
 			<Header onMapSelect={selectMap} onDistanceUnitSelect={selectDistanceUnit} onSpeedChange={setbaseSpeed}/>
+			<Keybinds/>
 			<Map 
 				p_map={map}
 				p_unit={distanceUnit}
