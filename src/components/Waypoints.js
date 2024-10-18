@@ -19,7 +19,7 @@ const Waypoints = ({ p_waypoints, p_flightLegs, p_distanceUnit }) => {
 	// }
 
 	return (
-		<div style={{ position: 'absolute' }}>
+		<div style={{ position: 'absolute', height: '100vh', width: '100vw', pointerEvents: 'none',overflow: 'hidden'}}>
 			{p_flightLegs.map((leg, index) => (
 				<div
 					key={index}
