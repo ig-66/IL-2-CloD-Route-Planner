@@ -4,11 +4,12 @@ import Header from './components/Header';
 import Map from './components/Map';
 import Waypoints from './components/Waypoints';
 import Keybinds from './components/Keybinds';
+import TASCalculator from './components/TASCalculator';
 
 function App() {
 	const [map, selectMap] = useState('channel');
 	const [distanceUnit, selectDistanceUnit] = useState('km');
-	const [baseSpeed, setbaseSpeed] = useState(400);
+	const [baseSpeed, setBaseSpeed] = useState(400);
 	
 	/**
 	 * An array of speed should be used, so to know which speed use in each leg
@@ -17,21 +18,24 @@ function App() {
 	 * the first one is created, the base speed is used.  
 	*/
 	// The following are for future planned features:
-	const [speedList, setSpeedList] = useState([])
-	const [speedUnit, setSpeedUnit] = useState('kph');
+	// const [speedList, setSpeedList] = useState([])
+	// const [speedUnit, setSpeedUnit] = useState('kph');
 
 	const [waypoints, setWaypoints] = useState([]);
 	const [flightLegs, setFlightLegs] = useState([]);
 
 	return (
 		<div className="App">
-			<Header onMapSelect={selectMap} onDistanceUnitSelect={selectDistanceUnit} onSpeedChange={setbaseSpeed}/>
+			<Header p_speed={baseSpeed} onMapSelect={selectMap} onDistanceUnitSelect={selectDistanceUnit} onSpeedChange={setBaseSpeed}/>
 			<Keybinds/>
+			<TASCalculator 
+				p_speed={baseSpeed}
+				p_unit={distanceUnit}
+				onSetTAS={(tas) => {console.log(`App.js > TAS: ${Math.round(tas)}`); setBaseSpeed(tas)}}
+				/>
 			<Map 
 				p_map={map}
 				p_unit={distanceUnit}
-				p_speedList={speedList}
-				p_speedUnit={speedUnit}
 				p_baseSpeed={baseSpeed}
 				p_flightLegs={flightLegs}
 				onNewWaypoints={setWaypoints}

@@ -1,11 +1,15 @@
-import React, { useState } from 'react'; // Importing Modules
+import React, { useEffect, useState } from 'react'; // Importing Modules
 
-const Header = ({ onMapSelect, onDistanceUnitSelect, onSpeedChange }) => {
+const Header = ({ p_speed, onMapSelect, onDistanceUnitSelect, onSpeedChange }) => {
 
 	const [map, setMap] = useState('channel')
 	const [unit, setUnit] = useState('km')
-	const [speed, setSpeed] = useState(400)
+	const [speed, setSpeed] = useState(p_speed)
 	
+	useEffect(() => {
+		setSpeed(p_speed);
+	}, [p_speed])
+
 	const handleMapChange = (event) => {
 		setMap(event.target.value)
 		onMapSelect(event.target.value)
@@ -53,6 +57,7 @@ const Header = ({ onMapSelect, onDistanceUnitSelect, onSpeedChange }) => {
 				value={Math.round(speed)}
 				onChange={handleSpeedChange}
 				placeholder={speed}
+				size={3}
 			/>
 		</header>
 	);

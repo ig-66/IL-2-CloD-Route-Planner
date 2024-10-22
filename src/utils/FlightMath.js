@@ -52,10 +52,50 @@ function getLegTimeString(distance, speed) {
 	return legTimeString;
 }
 
+function convertMeterToFeet(meter) {
+	return meter * 3.28084;
+}
+
+function convertFeetToMeter(feet) {
+	return feet * 0.3048;
+}
+
+function convertKphToMph(kph) {
+	return kph / 1.60934;
+}
+
+function convertMphToKph(mph) {
+	return mph * 1.60934;
+}
+
+function calculateTAS(altitude, ias, isMetric) {
+	let tas;
+	
+	/**
+	 * According to the Flashcards All Aircraft-en.pdf, page 64, in the game folder:
+	 * 
+	 *  	"Pilot tip: TAS can be approximated by adding 3% to IAS for every 500 m of altitude. 
+	 *  	For example, at 5000 m with anIAS of 340 km/h, the TAS is 340 + 30% ≈ 440 km/h. 
+	 *  	This is the figure you should enter in the bombsight"
+	*/
+
+	if (isMetric)
+		tas = ias * (((altitude / 500) * 0.03) + 1) 
+	else 
+		tas = ias * (((convertFeetToMeter(altitude) / 500) * 0.03) + 1)
+	
+	return tas;
+}
+
 const FlightMath = {
 	getLegDistance,
 	getLegHeading,
 	getLegTimeString,
+	convertMeterToFeet,
+	convertFeetToMeter,
+	convertKphToMph,
+	convertMphToKph,
+	calculateTAS
 };
 
 export default FlightMath;
