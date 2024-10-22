@@ -87,6 +87,11 @@ function calculateTAS(altitude, ias, isMetric) {
 	return tas;
 }
 
+function addHeadingVariation(trueHDG, variation)
+{
+	return (((trueHDG + variation) % 360) + 360) % 360;
+}
+
 const FlightMath = {
 	getLegDistance,
 	getLegHeading,
@@ -95,7 +100,8 @@ const FlightMath = {
 	convertFeetToMeter,
 	convertKphToMph,
 	convertMphToKph,
-	calculateTAS
+	calculateTAS,
+	addHeadingVariation
 };
 
 export default FlightMath;

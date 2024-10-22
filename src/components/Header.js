@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'; // Importing Modules
 
-const Header = ({ p_speed, onMapSelect, onDistanceUnitSelect, onSpeedChange }) => {
+const Header = ({ p_speed, p_isMagnetic, onHeadingTypeChange, onMapSelect, onDistanceUnitSelect, onSpeedChange }) => {
 
 	const [map, setMap] = useState('channel')
 	const [unit, setUnit] = useState('km')
 	const [speed, setSpeed] = useState(p_speed)
+	const [isMagneticHeading, setMagneticHeading] = useState(p_isMagnetic)
 	
 	useEffect(() => {
 		setSpeed(p_speed);
@@ -40,11 +41,21 @@ const Header = ({ p_speed, onMapSelect, onDistanceUnitSelect, onSpeedChange }) =
 		onSpeedChange(event.target.value);
 	}
 
+	const handleHeadingChange = (event) => {
+		const value = event.target.value === "true"; // REQUIRED: ensures value is boolean
+		setMagneticHeading(value);
+		onHeadingTypeChange(value);
+	}
+
 	return (
 		<header style={{ position: 'absolute', zIndex: 15, backgroundColor: 'white', padding: 7, borderRadius: '0 0 10px 0' }}>
 			<select value={map} onChange={handleMapChange}>
 				<option value="channel">Channel</option>
 				<option value="tobruk">Tobruk</option>
+			</select>
+			<select value={isMagneticHeading} onChange={handleHeadingChange} style={{ marginInline: '7px' }}>
+				<option value={false}>True HDG</option>
+				<option value={true}>Magnetic HDG</option>
 			</select>
 			<select value={unit} onChange={handleUnitChange} style={{ marginInline: '7px' }}>
 				<option value="km">Metric</option>

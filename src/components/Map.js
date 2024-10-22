@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import Route from './Route';
 import FlightMath from '../utils/FlightMath';
 
-const Map = ({ p_map, p_unit, p_flightLegs, p_speedList, p_baseSpeed, p_speedUnit, onNewWaypoints, onNewFlightLegs }) => {
+const Map = ({ p_map, p_unit, p_isMagneticHeading, p_flightLegs, p_speedList, p_baseSpeed, p_speedUnit, onNewWaypoints, onNewFlightLegs }) => {
 	const MAP_RATIOS = { channel: 13.7338063, tobruk: 26.284864 };
 
 	const [isDragging, setIsDragging] = useState(false);
@@ -16,13 +16,20 @@ const Map = ({ p_map, p_unit, p_flightLegs, p_speedList, p_baseSpeed, p_speedUni
 	const [waypoints, setWaypoints] = useState([]);
 	const [transformedWP, setTransformedWP] = useState([]);
 	const [mapRatio, setMapRatio] = useState(MAP_RATIOS.channel);
+	const [isMagneticHeading, setMagneticHeading] = useState(p_isMagneticHeading);
+	const [magVariation, setMagVariation] = useState(10);
 
 	const [map, setMap] = useState(map_channel)
 	
 	useEffect(() => {
+		setMagneticHeading(p_isMagneticHeading);
+	}, [p_isMagneticHeading])
+
+	useEffect(() => {
 		if (p_map === 'channel')
 		{
 			setMapRatio(MAP_RATIOS.channel);
+			setMagVariation(10);
 			setMap(map_channel)
 			setPosition({x:-800, y:-300})
 			setZoom(0.5)
@@ -30,6 +37,7 @@ const Map = ({ p_map, p_unit, p_flightLegs, p_speedList, p_baseSpeed, p_speedUni
 		else 
 		{
 			setMapRatio(MAP_RATIOS.tobruk);
+			setMagVariation(1.5);
 			setPosition({x:-150, y:-650})
 			setMap(map_tobruk)
 			setZoom(0.2)
@@ -59,14 +67,11 @@ const Map = ({ p_map, p_unit, p_flightLegs, p_speedList, p_baseSpeed, p_speedUni
 
 					let legHeading = FlightMath.getLegHeading(lastWP.x, lastWP.y, x, y);
 
+					if (isMagneticHeading)
+						legHeading = FlightMath.addHeadingVariation(legHeading, magVariation);
+					
 					let legDistance = FlightMath.getLegDistance(lastWP.x/zoom, lastWP.y/zoom, x/zoom, y/zoom,  mapRatio, p_unit);
 					
-					// let legSpeed;
-					// if (flightLegs.length < 1)
-					// 	legSpeed = p_baseSpeed;
-					// else 
-					// 	legSpeed = flightLegs[index-1].speed ?? p_baseSpeed;
-
 					let legSpeed = p_baseSpeed;
 
 					let legTime = FlightMath.getLegTimeString(legDistance, legSpeed)
@@ -94,7 +99,7 @@ const Map = ({ p_map, p_unit, p_flightLegs, p_speedList, p_baseSpeed, p_speedUni
 		setFlightLegs([...legs]);
 
 		onNewWaypoints(transformedWaypoints);
-	}, [waypoints, position, zoom, p_speedList, p_speedUnit, p_unit, p_baseSpeed]);
+	}, [waypoints, position, zoom, p_speedList, p_speedUnit, p_unit, p_baseSpeed, isMagneticHeading]);
 
 	useEffect(() => {
 		onNewFlightLegs([...flightLegs])

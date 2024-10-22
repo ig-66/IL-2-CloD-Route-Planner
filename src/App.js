@@ -10,6 +10,7 @@ function App() {
 	const [map, selectMap] = useState('channel');
 	const [distanceUnit, selectDistanceUnit] = useState('km');
 	const [baseSpeed, setBaseSpeed] = useState(400);
+	const [isMagneticHeading, setMagneticHeading] = useState(false)
 	
 	/**
 	 * An array of speed should be used, so to know which speed use in each leg
@@ -26,7 +27,14 @@ function App() {
 
 	return (
 		<div className="App">
-			<Header p_speed={baseSpeed} onMapSelect={selectMap} onDistanceUnitSelect={selectDistanceUnit} onSpeedChange={setBaseSpeed}/>
+			<Header 
+				p_speed={baseSpeed}
+				p_isMagnetic={isMagneticHeading}
+				onMapSelect={selectMap} 
+				onDistanceUnitSelect={selectDistanceUnit}
+				onSpeedChange={setBaseSpeed}
+				onHeadingTypeChange={(isMag) => setMagneticHeading(isMag)}
+				/>
 			<Keybinds/>
 			<TASCalculator 
 				p_speed={baseSpeed}
@@ -38,6 +46,7 @@ function App() {
 				p_unit={distanceUnit}
 				p_baseSpeed={baseSpeed}
 				p_flightLegs={flightLegs}
+				p_isMagneticHeading={isMagneticHeading}
 				onNewWaypoints={setWaypoints}
 				onNewFlightLegs={setFlightLegs}
 				/>
