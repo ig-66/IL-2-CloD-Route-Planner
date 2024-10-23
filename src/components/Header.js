@@ -37,27 +37,30 @@ const Header = ({ p_speed, p_isMagnetic, onHeadingTypeChange, onMapSelect, onDis
 	};
 
 	const handleSpeedChange = (event) => {
-		setSpeed(event.target.value);
-		onSpeedChange(event.target.value);
+		let newSpeed = event.target.value;
+		if (newSpeed > 0) {
+			setSpeed(newSpeed);
+			onSpeedChange(newSpeed);
+		}
 	}
 
 	const handleHeadingChange = (event) => {
-		const value = event.target.value === "true"; // REQUIRED: ensures value is boolean
-		setMagneticHeading(value);
-		onHeadingTypeChange(value);
+		const isMagnetic = event.target.value === "true"; // REQUIRED: ensures value is boolean
+		setMagneticHeading(isMagnetic);
+		onHeadingTypeChange(isMagnetic);
 	}
 
 	return (
 		<header style={{ position: 'absolute', zIndex: 15, backgroundColor: 'white', padding: 7, borderRadius: '0 0 10px 0' }}>
-			<select value={map} onChange={handleMapChange}>
+			<select value={map} onChange={handleMapChange} style={{ marginInline: '3px' }}>
 				<option value="channel">Channel</option>
 				<option value="tobruk">Tobruk</option>
 			</select>
-			<select value={isMagneticHeading} onChange={handleHeadingChange} style={{ marginInline: '7px' }}>
+			<select value={isMagneticHeading} onChange={handleHeadingChange} style={{ marginInline: '3px' }}>
 				<option value={false}>True HDG</option>
 				<option value={true}>Magnetic HDG</option>
 			</select>
-			<select value={unit} onChange={handleUnitChange} style={{ marginInline: '7px' }}>
+			<select value={unit} onChange={handleUnitChange} style={{ marginInline: '3px' }}>
 				<option value="km">Metric</option>
 				<option value="mi">Imperial</option>
 			</select>

@@ -33,7 +33,7 @@ const Waypoints = ({ p_waypoints, p_flightLegs, p_distanceUnit }) => {
 					}}
 				>
 					<a style={{ fontWeight: 'bold' }}>{index + 1}</a><br/>
-					<a>{Math.round(leg.heading) + '°'}</a><br/>
+					<a>{Math.round(leg.heading) % 360 + '°'}</a><br/>
 					<a>{Math.round(leg.distance) + ' ' + p_distanceUnit}</a><br/>
 					<a>{`${Math.round(leg.speed)} ${p_distanceUnit === 'km' ? 'km/h' : 'mph'}`}</a><br/>
 					<a>{leg.time}</a><br/>

@@ -8,15 +8,20 @@ const TASCalculator = ({ p_unit, p_speed, onSetTAS }) => {
 	const [TAS, setTAS] = useState()
 	const [altitude, setAltitude] = useState(1000);
 	const [altitudeUnit, setAltitudeUnit] = useState('m');
-	const [speedUnit, setSpeedUnit] = useState('km/h');
 
 	function handleAltitudeChange(event) {
-		setAltitude(event.target.value);
+		let newAltitude = event.target.value;
+		if (newAltitude >= 0)
+			setAltitude(newAltitude);
 	}
 
 	function handleSpeedChange(event) {
-		setSpeed(event.target.value);
-		setTAS(event.target.value);
+		let newSpeed = event.target.value;
+		if (newSpeed > 0)
+		{
+			setSpeed(newSpeed);
+			setTAS(newSpeed);
+		}
 	}
 
 	useEffect(() => {

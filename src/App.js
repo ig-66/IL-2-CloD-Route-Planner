@@ -10,18 +10,7 @@ function App() {
 	const [map, selectMap] = useState('channel');
 	const [distanceUnit, selectDistanceUnit] = useState('km');
 	const [baseSpeed, setBaseSpeed] = useState(400);
-	const [isMagneticHeading, setMagneticHeading] = useState(false)
-	
-	/**
-	 * An array of speed should be used, so to know which speed use in each leg
-	 * whenever a new leg is added, the last speed should be used for this new leg
-	 * the `baseSpeed` is the default speed for the legs, whenever a new leg, in this case,
-	 * the first one is created, the base speed is used.  
-	*/
-	// The following are for future planned features:
-	// const [speedList, setSpeedList] = useState([])
-	// const [speedUnit, setSpeedUnit] = useState('kph');
-
+	const [isMagneticHeading, setMagneticHeading] = useState(false);
 	const [waypoints, setWaypoints] = useState([]);
 	const [flightLegs, setFlightLegs] = useState([]);
 
