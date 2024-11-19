@@ -51,7 +51,18 @@ const Header = ({ p_speed, p_isMagnetic, onHeadingTypeChange, onMapSelect, onDis
 	}
 
 	return (
-		<header style={{ position: 'absolute', zIndex: 15, backgroundColor: 'white', padding: 7, borderRadius: '0 0 10px 0' }}>
+		<header 
+			style={{
+				position: 'absolute', 
+				zIndex: 15, 
+				backgroundColor: 'white', 
+				padding: 7, 
+				borderRadius: '0 0 10px 10px',
+				top: 0,
+				left: '50%',
+				transform: 'translateX(-50%)',
+			}}
+		>
 			<select value={map} onChange={handleMapChange} style={{ marginInline: '3px' }}>
 				<option value="channel">Channel</option>
 				<option value="tobruk">Tobruk</option>

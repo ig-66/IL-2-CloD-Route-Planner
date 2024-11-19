@@ -1,206 +1,110 @@
-import map_tobruk from '../assets/maps/map_tobruk.jpg'
-import map_channel from '../assets/maps/map_channel.jpg'
+import React, { useEffect } from "react";
+import { MapContainer, ImageOverlay, Popup, Marker } from "react-leaflet";
+import L, { Icon } from "leaflet";
+import "leaflet/dist/leaflet.css";
+import legicon from '../assets/icons/legicon.ico'
 
-import React, { useState, useEffect } from 'react';
-import Route from './Route';
-import FlightMath from '../utils/FlightMath';
+var flightLegObj = {
+	coord: {
+		lat: 100,
+		lng: 100
+	},
+	distance: 78.2,
+	heading: 45,
+	altitude: 1000,
+	speed_ias: 450
+} 
 
-const Map = ({ p_map, p_unit, p_isMagneticHeading, p_flightLegs, p_speedList, p_baseSpeed, p_speedUnit, onNewWaypoints, onNewFlightLegs }) => {
-	const MAP_RATIOS = { channel: 13.7338063, tobruk: 26.284864 };
+const iconSize = 20
+const icon = new Icon ({
+	iconUrl: legicon,
+	iconSize: [iconSize, iconSize],
+	iconAnchor: [iconSize/2, iconSize/2], // Anchor point of the icon (middle bottom)
+	popupAnchor: [0, iconSize*(-1)], // Anchor point for popups relative to the icon
+})
 
-	const [isDragging, setIsDragging] = useState(false);
-	const [position, setPosition] = useState({ x: -800, y: -300 });
-	const [offset, setOffset] = useState({ x: 0, y: 0 });
-	const [zoom, setZoom] = useState(0.5);
-	const [flightLegs, setFlightLegs] = useState([...p_flightLegs]);
-	const [waypoints, setWaypoints] = useState([]);
-	const [transformedWP, setTransformedWP] = useState([]);
-	const [mapRatio, setMapRatio] = useState(MAP_RATIOS.channel);
-	const [isMagneticHeading, setMagneticHeading] = useState(p_isMagneticHeading);
-	const [magVariation, setMagVariation] = useState(10);
+const Map = ({p_mapObj}) => {
+	const [mapObj, setMapObj] = React.useState(null);
+	const [mapBounds, setBounds] = React.useState(null);
+	const [mapCenter, setMapCenter] = React.useState(null);
 
-	const [map, setMap] = useState(map_channel)
-	
 	useEffect(() => {
-		setMagneticHeading(p_isMagneticHeading);
-	}, [p_isMagneticHeading])
+		setMapObj(p_mapObj);
+	}, [p_mapObj]);
 
 	useEffect(() => {
-		if (p_map === 'channel')
-		{
-			setMapRatio(MAP_RATIOS.channel);
-			setMagVariation(10);
-			setMap(map_channel)
-			setPosition({x:-800, y:-300})
-			setZoom(0.5)
-		} 
-		else 
-		{
-			setMapRatio(MAP_RATIOS.tobruk);
-			setMagVariation(1.5);
-			setPosition({x:-150, y:-650})
-			setMap(map_tobruk)
-			setZoom(0.2)
-		}
+		if (!mapObj) return;
 
-		setWaypoints([])
-		setFlightLegs([])
+		const img = new Image();
+		img.src = mapObj.map;
 
-	}, [p_map]);
+		img.onload = () => {
+			const width = img.width;
+			const height = img.height;
+			setMapCenter([height / 2, width / 2])
+			setBounds([
+				[0, 0],
+				[height, width]
+			]);
+		};
+	}, [mapObj])
 
-	// Update waypoint positions in window coordinates
-	useEffect(() => {
-		const transformedWaypoints = waypoints.map(({ x, y }) => ({
-			x: position.x + x * zoom,
-			y: position.y + y * zoom,
-		}));
+	if (!mapBounds || !mapCenter || !mapObj) return <a>Loading map ...</a>
 
-		var legs = [];
-
-		if (transformedWaypoints.length > 1){
-			transformedWaypoints.forEach(({x, y}, index) => {
-				if (index === 0)
-					;// nothing
-				else 
-				{
-					let lastWP = transformedWaypoints[index-1];
-
-					let legHeading = FlightMath.getLegHeading(lastWP.x, lastWP.y, x, y);
-
-					if (isMagneticHeading)
-						legHeading = FlightMath.addHeadingVariation(legHeading, magVariation);
-					
-					let legDistance = FlightMath.getLegDistance(lastWP.x/zoom, lastWP.y/zoom, x/zoom, y/zoom,  mapRatio, p_unit);
-					
-					let legSpeed = p_baseSpeed;
-
-					let legTime = FlightMath.getLegTimeString(legDistance, legSpeed)
-
-					let newLeg = {
-						coord: 
-						{
-							x0: lastWP.x,
-							y0: lastWP.y,
-							x1: x,
-							y1: y
-						},		
-						heading: legHeading,
-						distance: legDistance,
-						speed: legSpeed,
-						time: legTime,
-					}
-
-					legs = [...legs, newLeg];
-				}
-			})
-		} 
+	function DraggableMarker({p_flightlLeg, p_deviation: bool,}) {
+		const [position, setPosition] = React.useState(mapCenter)
+		const markerRef = React.useRef(null)
 		
-		setTransformedWP([...transformedWaypoints]);
-		setFlightLegs([...legs]);
+		const eventHandlers = React.useMemo(
+			() => ({
+				dragend() {
+					const marker = markerRef.current
+					if (marker != null) {
+						setPosition(marker.getLatLng())
+					}
+				},
+			}),
+			[],
+		)
 
-		onNewWaypoints(transformedWaypoints);
-	}, [waypoints, position, zoom, p_speedList, p_speedUnit, p_unit, p_baseSpeed, isMagneticHeading]);
-
-	useEffect(() => {
-		onNewFlightLegs([...flightLegs])
-	}, [flightLegs])
-
-	const handleMouseDown = (e) => {
-		e.preventDefault();
-
-		if (e.button === 0) { // Left mouse button
-			const offsetX = e.clientX - position.x;
-			const offsetY = e.clientY - position.y;
-	
-			setOffset({ x: offsetX, y: offsetY });
-			setIsDragging(true);
-		}
-		else if (e.button === 1) // MMB
-		{
-			if (flightLegs.length === 1)
-				setWaypoints([]);
-
-			if (waypoints.length > 0)
-				setWaypoints((prevClickList) => [...prevClickList.slice(0, -1)]);
-		}
-		else if (e.button === 2) // RMB
-		{
-			const newClick = {
-				x: (e.clientX - position.x) / zoom,
-				y: (e.clientY - position.y) / zoom
-			};
-
-			setWaypoints([...waypoints, newClick]);
-		}
+		return (
+			<Marker
+				icon={icon}
+				draggable={true}
+				eventHandlers={eventHandlers}
+				position={position}
+				ref={markerRef}>
+				<Popup minWidth={90}>
+					<span>
+						<a>{JSON.stringify(position)}</a><br />
+						<a style={{ fontWeight: 'bold' }}>{1}</a><br />
+						<a>{Math.round(95.2) % 360 + '°'}</a><br />
+						<a>{Math.round(75) + ' ' + 'km'}</a><br />
+						<a>{`${Math.round(350.1)} ${'km/h'}`}</a><br />
+						<a>07:30</a><br />
+					</span>
+				</Popup>
+			</Marker>
+		)
 	}
 
-	const handleMouseMove = (e) => {
-		if (!isDragging) return;
-
-		const newX = e.clientX - offset.x;
-		const newY = e.clientY - offset.y;
-		setPosition({ x: newX, y: newY });
-	};
-
-	const handleMouseUp = () => {
-		setIsDragging(false);
-	};
-
-	const handleWheel = (e) => {
-		e.preventDefault();
-
-		// Calculate the mouse position relative to the image
-		const mouseX = e.clientX - position.x;
-		const mouseY = e.clientY - position.y;
-
-		// Calculate the zoom change
-		const zoomChange = e.deltaY < 0 ? 0.1 : -0.1;
-
-		var newZoom;
-
-		if (p_map === 'tobruk')
-			newZoom = Math.max(0.15, Math.min(zoom + zoomChange, 3));
-		else
-			newZoom = Math.max(0.25, Math.min(zoom + zoomChange, 3));
-
-		// Calculate the new position to keep the image centered around the mouse pointer
-		const newX = position.x - mouseX * (newZoom / zoom - 1);
-		const newY = position.y - mouseY * (newZoom / zoom - 1);
-
-		setZoom(newZoom);
-		setPosition({ x: newX, y: newY });
-	};
-
 	return (
-		<div
-			style={{
-				width: '100vw',
-				height: '100vh',
-				position: 'absolute',
-				overflow: 'hidden',
-			}}
-			onMouseMove={handleMouseMove}
-			onMouseUp={handleMouseUp}
-			onMouseLeave={handleMouseUp}
-			onWheel={handleWheel}
-			onContextMenu={(e) => e.preventDefault()}
+		<MapContainer
+			bounceAtZoomLimits={true}
+			center={mapCenter} // Center of the map, adjust as needed
+			zoom={mapObj.zoom.default} // Set an initial zoom level
+			maxZoom={mapObj.zoom.max}
+			minZoom={mapObj.zoom.min} // Allows zooming out if the image is large
+			crs={L.CRS.Simple} // Use Simple CRS for image coordinates
+			style={{ height: "100vh", width: "100vw", zIndex: 1 }}
+			bounds={mapBounds}
 		>
-			<img
-				src={map}
-				alt="draggable"
-				onMouseDown={handleMouseDown}
-				onDragStart={(e) => e.preventDefault()}
-				style={{
-					position: 'relative',
-					left: `${position.x}px`,
-					top: `${position.y}px`,
-					transform: `scale(${zoom})`,
-					transformOrigin: '0 0',
-					cursor: isDragging ? 'grabbing' : 'grab',
-				}}
+			<ImageOverlay
+				url={mapObj.map}
+				bounds={mapBounds}
 			/>
-			<Route p_flightLegs={flightLegs} p_waypoints={transformedWP}/>
-		</div>
+			<DraggableMarker />
+		</MapContainer>
 	);
 };
 

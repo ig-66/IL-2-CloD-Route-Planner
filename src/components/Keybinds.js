@@ -7,7 +7,7 @@ const Keybinds = () => {
 			<div
 				style={{
 					...AppStyle.label,
-					bottom: '10px',
+					bottom: '20px',
 					right: '10px',
 					textAlign: 'left',
 					fontSize: 12,
