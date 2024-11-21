@@ -40,7 +40,7 @@ const FlightMath = {
 		const legDistanceKm = (legDistancePixels / mapRatio);
 
 		var legDistance;
-		if (p_unit === 'km')
+		if (p_unit === 'km' || p_unit === 'metric')
 			legDistance = legDistanceKm;
 		else
 			legDistance = legDistanceKm / 1.60934
