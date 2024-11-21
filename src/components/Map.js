@@ -24,7 +24,7 @@ var waypoint1 = {
 
 var waypoints = [waypoint0, waypoint1]
 
-const Map = ({p_mapObj, p_flightLegs, p_Markers}) => {
+const Map = ({p_mapObj, p_flightLegs, p_markers}) => {
 	const [mapObj, setMapObj] = React.useState(null);
 	const [mapBounds, setBounds] = React.useState(null);
 	const [mapCenter, setMapCenter] = React.useState(null);
@@ -68,8 +68,8 @@ const Map = ({p_mapObj, p_flightLegs, p_Markers}) => {
 				bounds={mapBounds}
 			/>
 			{
-				waypoints.map((wp, index) => (
-					<WaypointMarker p_waypoint={wp} p_id={index}/>
+				p_markers.map((marker, index) => (
+					<WaypointMarker key={index} p_waypoint={marker} p_id={index}/>
 				))
 			}
 			{/* put the leg arrows in here! */}

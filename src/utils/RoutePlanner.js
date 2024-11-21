@@ -39,8 +39,8 @@ class RoutePlanner {
 				lat: lat,
 				lng: lng
 			},
-			altitude: this.defaultAltitude,
-			speed_ias: this.defaultAirspeed
+			altitude: this.#markers.length > 0 ? this.#markers[this.#markers.length - 1].altitude ?? this.defaultAltitude : this.defaultAltitude,
+			speed_ias: this.#markers.length > 0 ? this.#markers[this.#markers.length - 1].speed_ias ?? this.defaultAirspeed : this.defaultAirspeed
 		})
 		this.#calculateFlightLegs()
 	}
@@ -71,15 +71,6 @@ class RoutePlanner {
 		this.#markers[id] = markerObj
 
 		this.#calculateFlightLegs()
-	}
-
-	/**
-	 * Set (new) map ratio.
-	 * 
-	 * @param {number} newMapRatio (New) Map ratio.
-	 */
-	setMapRatio(newMapRatio) {
-		this.mapRatio = newMapRatio
 	}
 
 	/**
@@ -115,6 +106,8 @@ class RoutePlanner {
 
 	#calculateFlightLegs ()
 	{
+		this.setNewMarkers(this.#markers)
+
 		if (!(this.#markers.length > 1)) return;
 
 		var newFlighLegs = []
@@ -128,7 +121,7 @@ class RoutePlanner {
 
 			let distance = FlightMath.getLegDistance(lastMarker.coord.lng, lastMarker.coord.lat, marker.coord.lng, marker.coord.lat, this.mapRatio, this.unit)
 
-			let speed = this.#flightLegs[index].speed ?? this.#flightLegs[index - 1].speed ?? this.defaultAirspeed
+			let speed = index >= this.#flightLegs.length || !this.#flightLegs[index] ? this.defaultAirspeed : this.#flightLegs[index].speed ?? this.#flightLegs[index - 1].speed ?? this.defaultAirspeed
 
 			let time = FlightMath.getLegTimeString(distance, speed)
 
@@ -154,10 +147,9 @@ class RoutePlanner {
 
 		})
 
-		if (this.setNewFlightLegs === 'function')
-			this.setNewFlightLegs(newFlighLegs) // set new flight legs callback
-
 		this.#flightLegs = newFlighLegs
+
+		this.setNewFlightLegs(newFlighLegs)
 	}
 }
 

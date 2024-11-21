@@ -11,15 +11,6 @@ const icon = new Icon({
 	popupAnchor: [0, iconSize * (-1)], // Anchor point for popups relative to the icon
 })
 
-var waypoint = {
-	coord: {
-		lat: 2000,
-		lng: 2000
-	},
-	altitude: 1000,
-	speed_ias: 450
-}
-
 function WaypointMarker({ p_waypoint, p_id }) {
 	const [position, setPosition] = React.useState([p_waypoint.coord.lat, p_waypoint.coord.lng])
 	const markerRef = React.useRef(null)
@@ -30,6 +21,7 @@ function WaypointMarker({ p_waypoint, p_id }) {
 				const marker = markerRef.current
 				if (marker != null) {
 					setPosition(marker.getLatLng())
+					// pass the change to the class
 				}
 			},
 		}),
@@ -53,10 +45,8 @@ function WaypointMarker({ p_waypoint, p_id }) {
 				<span>
 					<a>DEBUG: {JSON.stringify(position)}</a><br />
 					<a style={{ fontWeight: 'bold' }}>{p_id + 1}</a><br />
-					<a>{Math.round(95.2) % 360 + '°'}</a><br />
-					<a>{Math.round(p_waypoint.altitude) + ' ' + 'km'}</a><br />
-					<a>{`${Math.round(waypoint.speed_ias)} ${'km/h'}`}</a><br />
-					<a>07:30</a><br />
+					<a>{Math.round(p_waypoint.altitude) + ' ' + 'm'}</a><br />
+					<a>{`${Math.round(p_waypoint.speed_ias)} ${'km/h'}`}</a><br />
 				</span>
 			</Popup>
 		</Marker>
