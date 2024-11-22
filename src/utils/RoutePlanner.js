@@ -34,14 +34,15 @@ class RoutePlanner {
 	 * @param {number} lng Longitude - X axis.
 	 */
 	addMarker(lat, lng) {
-		this.#markers.push({
+		const newMarker ={
 			coord: {
 				lat: lat,
 				lng: lng
 			},
 			altitude: this.#markers.length > 0 ? this.#markers[this.#markers.length - 1].altitude ?? this.defaultAltitude : this.defaultAltitude,
 			speed_ias: this.#markers.length > 0 ? this.#markers[this.#markers.length - 1].speed_ias ?? this.defaultAirspeed : this.defaultAirspeed
-		})
+		}
+		this.#markers = [...this.#markers, newMarker]
 		this.#calculateFlightLegs()
 	}
 
@@ -54,7 +55,19 @@ class RoutePlanner {
 	 */
 	removeMarker(id)
 	{
-		this.#markers.splice(id)
+		this.#markers = this.#markers.filter((_, index) => index !== id); // creates a new array!
+		this.#calculateFlightLegs()
+	}
+
+	/**
+	 * Remove the last marker.
+	 * 
+	 * WARNING: this function will trigger a flight legs recalculation!
+	 */
+	removeLastMarker()
+	{
+		const updatedMarkers = this.#markers.slice(0, -1); // creates a new array!
+		this.#markers = updatedMarkers;
 		this.#calculateFlightLegs()
 	}
 
