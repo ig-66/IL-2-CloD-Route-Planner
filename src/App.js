@@ -20,7 +20,7 @@ function App() {
 	const routePlanner = new RoutePlanner(setFlightLegs, setMarkers, 'metric', 1000, baseSpeed)
 
 	useEffect(() => {
-		setMapObj(routePlanner.getMapObj()) // gets the default map object
+		setMapObj(routePlanner.getMapObj()) // Get the default map object
 	}, [])
 
 	if (mapObj === null) return <div>Loading ...</div>
@@ -41,7 +41,7 @@ function App() {
 				onSetTAS={(tas) => setBaseSpeed(tas)}
 				/>
 			<Keybinds/>
-			<Map p_mapObj={mapObj} p_flightLegs={flightLegs} p_markers={markers}/>
+			<Map p_mapObj={mapObj} p_flightLegs={flightLegs} p_markers={markers} p_routePlanner={routePlanner}/>
 			{/* <Waypoints p_waypoints={waypoints} p_flightLegs={flightLegs} p_distanceUnit={distanceUnit}/> */}
 		</div>
 	);
