@@ -11,17 +11,41 @@ const icon = new Icon({
 	popupAnchor: [0, iconSize * (-1)], // Anchor point for popups relative to the icon
 })
 
-function WaypointMarker({ p_waypoint, p_id }) {
+function WaypointMarker({ p_waypoint, p_id, p_routePlanner }) {
 	const [position, setPosition] = React.useState([p_waypoint.coord.lat, p_waypoint.coord.lng])
 	const markerRef = React.useRef(null)
 
 	const eventHandlers = React.useMemo(
 		() => ({
+			drag() {
+				// Continuously update the position during the drag
+				const marker = markerRef.current;
+				if (marker != null) {
+					const newMarkerProps = {
+						coord: {
+							lat: marker.getLatLng().lat,
+							lng: marker.getLatLng().lng
+						},
+						altitude: p_waypoint.altitude,
+						speed_ias: p_waypoint.speed_ias 
+					}
+					setPosition(marker.getLatLng());
+					p_routePlanner.modifyMarker(p_id, newMarkerProps)
+				}
+			},
 			dragend() {
 				const marker = markerRef.current
 				if (marker != null) {
+					const newMarkerProps = {
+						coord: {
+							lat: marker.getLatLng().lat,
+							lng: marker.getLatLng().lng
+						},
+						altitude: p_waypoint.altitude,
+						speed_ias: p_waypoint.speed_ias
+					}
 					setPosition(marker.getLatLng())
-					// pass the change to the class
+					p_routePlanner.modifyMarker(p_id, newMarkerProps)
 				}
 			},
 		}),

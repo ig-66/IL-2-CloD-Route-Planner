@@ -79,10 +79,19 @@ class RoutePlanner {
 	 * @param {number} id Marker ID.
 	 * @param {object} markerObj New properties of the marker.
 	 */
-	modifyMarker(id, markerObj)
-	{
-		this.#markers[id] = markerObj
+	modifyMarker(id, markerObj) {
+		const updatedMarkers = [...this.#markers] // create a new array, once again weeee
+		updatedMarkers[id] = markerObj
+		this.#markers = updatedMarkers;
+		this.#calculateFlightLegs();
+	}
 
+	/**
+	 * Removes all markers/flight legs.
+	 */
+	removeAllMarkers()
+	{
+		this.#markers = []
 		this.#calculateFlightLegs()
 	}
 
@@ -106,22 +115,17 @@ class RoutePlanner {
 		}
 	}
 
-	/**
-	 * Map the list of markers.
-	 * 
-	 * @param {function} callback 
-	 * @returns 
-	 */
-	#mapMarkers(callback)
-	{
-		return this.#markers.map(callback)
-	}
-
 	#calculateFlightLegs ()
 	{
 		this.setNewMarkers(this.#markers)
 
-		if (!(this.#markers.length > 1)) return;
+		if (!(this.#markers.length > 1))
+		{
+			const newFlighLegs = []
+			this.#flightLegs = newFlighLegs
+			this.setNewFlightLegs(this.#flightLegs)
+			return
+		}
 
 		var newFlighLegs = []
 
@@ -143,7 +147,7 @@ class RoutePlanner {
 				{
 					start: {
 						lat: lastMarker.coord.lat,
-						lng0: lastMarker.coord.lng,
+						lng: lastMarker.coord.lng,
 					},
 					end: {
 						lat: marker.coord.lat,

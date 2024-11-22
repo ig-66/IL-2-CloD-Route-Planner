@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import Header from './components/Header';
 import Map from './components/Map';
-import Waypoints from './components/Waypoints';
 import Keybinds from './components/Keybinds';
 import TASCalculator from './components/TASCalculator';
 import RoutePlanner from './utils/RoutePlanner';
@@ -17,11 +16,22 @@ function App() {
 	const [flightLegs, setFlightLegs] = useState([]);
 	const [markers, setMarkers] = useState([]);
 	
-	const routePlanner = new RoutePlanner(setFlightLegs, setMarkers, 'metric', 1000, baseSpeed)
+	const routePlannerRef = useRef(null);
+
+	if (!routePlannerRef.current) {
+		routePlannerRef.current = new RoutePlanner(setFlightLegs, setMarkers, 'metric', 1000, baseSpeed);
+	}
+	const routePlanner = routePlannerRef.current;
 
 	useEffect(() => {
 		setMapObj(routePlanner.getMapObj()) // Get the default map object
-	}, [])
+	}, [routePlanner]);
+
+	function changeMap(mapName)
+	{
+		routePlanner.removeAllMarkers()
+		setMapObj(routePlanner.getMapObj(mapName))
+	}
 
 	if (mapObj === null) return <div>Loading ...</div>
 
@@ -30,7 +40,7 @@ function App() {
 			<Header 
 				p_speed={baseSpeed}
 				p_isMagnetic={isMagneticHeading}
-				onMapSelect={(mapName) => setMapObj(routePlanner.getMapObj(mapName))} 
+				onMapSelect={(mapName) => changeMap(mapName)} 
 				onDistanceUnitSelect={selectDistanceUnit}
 				onSpeedChange={setBaseSpeed}
 				onHeadingTypeChange={(isMag) => setMagneticHeading(isMag)}

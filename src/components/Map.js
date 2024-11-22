@@ -3,7 +3,7 @@ import { MapContainer, ImageOverlay, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import WaypointMarker from "./WaypointMarker";
-import RoutePlanner from "../utils/RoutePlanner";
+import FlightLegs from "./FlightLegs";
 
 const Map = ({ p_mapObj, p_flightLegs, p_markers, p_routePlanner }) => {
 	const [mapObj, setMapObj] = React.useState(null);
@@ -48,8 +48,9 @@ const Map = ({ p_mapObj, p_flightLegs, p_markers, p_routePlanner }) => {
 			<WaypointAdder p_routePlanner={p_routePlanner}/>
 			<WaypointRemover p_routePlanner={p_routePlanner}/>
 			{p_markers.map((marker, index) => (
-				<WaypointMarker key={index} p_waypoint={marker} p_id={index} />
+				<WaypointMarker key={index} p_waypoint={marker} p_id={index} p_routePlanner={p_routePlanner}/>
 			))}
+			<FlightLegs p_flightLegs={p_flightLegs}/>
 		</MapContainer>
 	);
 };
