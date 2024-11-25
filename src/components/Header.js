@@ -1,53 +1,40 @@
-import React, { useEffect, useState } from 'react'; // Importing Modules
+import React from 'react'; // Importing Modules
 
-const Header = ({ p_speed, p_isMagnetic, onHeadingTypeChange, onMapSelect, onDistanceUnitSelect, onSpeedChange }) => {
-
-	const [map, setMap] = useState('channel')
-	const [unit, setUnit] = useState('km')
-	const [speed, setSpeed] = useState(p_speed)
-	const [isMagneticHeading, setMagneticHeading] = useState(p_isMagnetic)
+const Header = ({ currentMap, baseSpeed, isMagnetic, 
+	speedUnit, altitudeUnit, distanceUnit, 
+	speedUnitOptions, altitudeUnitOptions, distanceUnitOptions, mapOptions,
+	onMapSelect, onSpeedUnitSelect, onAltitudeUnitSelect, onDistanceUnitSelect, 
+	onSpeedChange, onHeadingTypeChange }) => {
 	
-	useEffect(() => {
-		setSpeed(p_speed);
-	}, [p_speed])
-
 	const handleMapChange = (event) => {
-		setMap(event.target.value)
 		onMapSelect(event.target.value)
-	};
-
-	const handleUnitChange = (event) => {
-		let newUnit = event.target.value;
-
-		if (newUnit === 'km')
-		{
-			let newSpeed = speed * 1.60934;
-			setSpeed(newSpeed);
-			onSpeedChange(newSpeed);
-		}
-		else
-		{
-			let newSpeed = speed / 1.60934;
-			setSpeed(newSpeed);
-			onSpeedChange(newSpeed);
-		}
-		
-		setUnit(newUnit)
-		onDistanceUnitSelect(newUnit)
 	};
 
 	const handleSpeedChange = (event) => {
 		let newSpeed = event.target.value;
 		if (newSpeed > 0) {
-			setSpeed(newSpeed);
 			onSpeedChange(newSpeed);
 		}
 	}
 
 	const handleHeadingChange = (event) => {
 		const isMagnetic = event.target.value === "true"; // REQUIRED: ensures value is boolean
-		setMagneticHeading(isMagnetic);
 		onHeadingTypeChange(isMagnetic);
+	}
+
+	const handleSpeedUnitChange = (event) => {
+		let unit = event.target.value
+		onSpeedUnitSelect(unit)
+	}
+
+	const handleAltUnitChange = (event) => {
+		let unit = event.target.value
+		onAltitudeUnitSelect(unit)
+	}
+
+	const handleDistanceUnitChange = (event) => {
+		let unit = event.target.value
+		onDistanceUnitSelect(unit)
 	}
 
 	return (
@@ -63,25 +50,45 @@ const Header = ({ p_speed, p_isMagnetic, onHeadingTypeChange, onMapSelect, onDis
 				transform: 'translateX(-50%)',
 			}}
 		>
-			<select value={map} onChange={handleMapChange} style={{ marginInline: '3px' }}>
-				<option value="channel">Channel</option>
-				<option value="tobruk">Tobruk</option>
+			<select value={currentMap} onChange={handleMapChange} style={{ marginInline: '3px' }}>
+				{
+					mapOptions.map((mapOption) => (
+						<option value={mapOption.name}>{mapOption.displayName}</option>
+					))
+				}
 			</select>
-			<select value={isMagneticHeading} onChange={handleHeadingChange} style={{ marginInline: '3px' }}>
+			<select value={isMagnetic} onChange={handleHeadingChange} style={{ marginInline: '3px' }}>
 				<option value={false}>True HDG</option>
 				<option value={true}>Magnetic HDG</option>
 			</select>
-			<select value={unit} onChange={handleUnitChange} style={{ marginInline: '3px' }}>
-				<option value="km">Metric</option>
-				<option value="mi">Imperial</option>
+			<select value={speedUnit} onChange={handleSpeedUnitChange} style={{ marginInline: '3px' }}>
+				{
+					speedUnitOptions.map((unit) => (
+						<option value={unit}>Speed {unit}</option>
+					))
+				}
 			</select>
-			<label style={{paddingLeft: 10, paddingRight: 4}}>{unit === 'km' ? 'Speed (km/h):' : 'Speed (mph):'}</label>
+			<select value={altitudeUnit} onChange={handleAltUnitChange} style={{ marginInline: '3px' }}>
+				{
+					altitudeUnitOptions.map((unit) => (
+						<option value={unit}>Altitude {unit}</option>
+					))
+				}
+			</select>
+			<select value={distanceUnit} onChange={handleDistanceUnitChange} style={{ marginInline: '3px' }}>
+				{
+					distanceUnitOptions.map((unit) => (
+						<option value={unit}>Distance {unit}</option>
+					))
+				}				
+			</select>
+			<label style={{paddingLeft: 10, paddingRight: 4}}>Speed {speedUnit}</label>
 			<input
 				type="number"
 				id="numberInput"
-				value={Math.round(speed)}
+				value={Math.round(baseSpeed)}
 				onChange={handleSpeedChange}
-				placeholder={speed}
+				placeholder={baseSpeed}
 				size={3}
 			/>
 		</header>

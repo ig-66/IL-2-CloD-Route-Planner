@@ -66,12 +66,11 @@ function WaypointMarker({ p_waypoint, p_id, p_routePlanner }) {
 			position={position}
 			ref={markerRef}>
 			<Popup minWidth={90}>
-				<span>
-					<a>DEBUG: {JSON.stringify(position)}</a><br />
+				<div style={{ textAlign: 'center' }}>
 					<a style={{ fontWeight: 'bold' }}>{p_id + 1}</a><br />
 					<a>{Math.round(p_waypoint.altitude) + ' ' + 'm'}</a><br />
 					<a>{`${Math.round(p_waypoint.speed_ias)} ${'km/h'}`}</a><br />
-				</span>
+				</div>
 			</Popup>
 		</Marker>
 	)

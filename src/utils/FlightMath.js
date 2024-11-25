@@ -131,6 +131,50 @@ const FlightMath = {
 	},
 
 	/**
+	 * Convert a given speed from km/h to knots.
+	 * 
+	 * @param {number} kph - speed, in km/h.
+	 * @returns converted speed, in knots.
+	 */
+	convertKphToKnots(kph)
+	{
+		return kph / 1.852
+	},
+
+	/**
+	 * Convert a given speed from mph to knots.
+	 * 
+	 * @param {number} mph - speed, in mph.
+	 * @returns converted speed, in knots.
+	 */
+	convertMphToKnots(mph)
+	{
+		return mph * 0.868976
+	},
+	
+	/**
+	 * Convert a given speed from knots to km/h.
+	 * 
+	 * @param {number} knots - speed, in knots.
+	 * @returns converted speed, in km/h.
+	 */
+	convertKnotsToKph(knots)
+	{
+		return knots * 1.852
+	},
+
+	/**
+	 * Convert a given speed from knots to mph.
+	 * 
+	 * @param {number} knots - speed, in knots.
+	 * @returns converted speed, in mph.
+	 */
+	convertKnotsToMph(knots)
+	{
+		return knots * 1.15078
+	},
+
+	/**
 	 * Calculate the (approximate) True Air Speed with the given altitude and speed.
 	 * 
 	 * WARNING: both altitude and speed must be either metric or imperial. DO NOT pass
