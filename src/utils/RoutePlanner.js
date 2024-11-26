@@ -313,9 +313,13 @@ class RoutePlanner {
 
 			let distance = FlightMath.getLegDistance(lastMarker.coord.lng, lastMarker.coord.lat, marker.coord.lng, marker.coord.lat, this.mapRatio, this.unit)
 
-			let speed = index >= this.#flightLegs.length || !this.#flightLegs[index] ? this.defaultAirspeed : this.#flightLegs[index].speed ?? this.#flightLegs[index - 1].speed ?? this.defaultAirspeed
+			// let speed = index >= this.#flightLegs.length || !this.#flightLegs[index] ? this.defaultAirspeed : this.#flightLegs[index].speed ?? this.#flightLegs[index - 1].speed ?? this.defaultAirspeed
+
+			let speed = index >= this.#markers.length || !this.#markers[index] ? this.defaultAirspeed : this.#markers[index].speed_ias
 
 			let time = FlightMath.getLegTimeString(distance, speed)
+
+			let altitude = index >= this.#markers.length || !this.#markers[index] ? this.defaultAltitude : this.#markers[index].altitude
 
 			let newFlightLeg = {
 				coord:
@@ -331,6 +335,7 @@ class RoutePlanner {
 				},
 				heading: heading,
 				distance: distance,
+				altitude: altitude,
 				speed: speed,
 				time: time,
 			}

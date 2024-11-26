@@ -58,24 +58,7 @@ const Map = ({ p_mapObj, p_flightLegs, p_markers, p_routePlanner, speedUnit, alt
 			))}
 			<FlightLegs p_flightLegs={p_flightLegs}/>
 			{p_flightLegs.map((leg, index) => (
-				// leg = {
-				// 	coord:
-				// 	{
-				// 		start: {
-				// 			lat: lat0,
-				// 			lng: lng0,
-				// 		},
-				// 		end: {
-				// 			lat: lat1,
-				// 			lng: lng1
-				// 		}
-				// 	},
-				// 	heading: heading,
-				// 	distance: distance,
-				// 	speed: speed,
-				// 	time: time,
-				// }
-				<FlightLegLabel key={index} id={index} leg={leg} speedUnit={speedUnit} distanceUnit={distanceUnit}/>
+				<FlightLegLabel key={index} id={index} leg={leg} speedUnit={speedUnit} distanceUnit={distanceUnit} altitudeUnit={altitudeUnit}/>
 			))}
 		</MapContainer>
 	);
