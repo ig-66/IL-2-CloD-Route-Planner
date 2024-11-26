@@ -41,7 +41,7 @@ class RoutePlanner {
 
 	#flightLegs = []
 	#markers = []
-	#speedUnit = 'km/h'
+	#speedUnit = 'kph'
 	#altitudeUnit = 'm'
 	#distanceUnit = 'km'
 

@@ -9,7 +9,7 @@ const calculateMidpoint = (start, end) => ({
 })
 
 const createArrow = (start, end, heading) => {
-	const angle = degreesToRadians(heading + 90)
+	const angle = degreesToRadians((heading * -1) - 90)
 
 	const midPoint = calculateMidpoint(start, end)
 

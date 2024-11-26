@@ -58,7 +58,7 @@ const FlightMath = {
 	 * @returns 
 	 */
 	getLegHeading(x0, y0, x1, y1) {
-		var angle = radiansToDegrees(Math.atan2((y1 - y0), (x1 - x0))) + 90;
+		var angle = radiansToDegrees(Math.atan2((y1 - y0)*-1, (x1 - x0))) + 90;
 
 		if (angle >= 360)
 			angle -= 360;
