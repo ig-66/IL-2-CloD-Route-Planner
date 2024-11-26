@@ -4,8 +4,9 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import WaypointMarker from "./WaypointMarker";
 import FlightLegs from "./FlightLegs";
+import FlightLegLabel from "./FlightLegLabel";
 
-const Map = ({ p_mapObj, p_flightLegs, p_markers, p_routePlanner }) => {
+const Map = ({ p_mapObj, p_flightLegs, p_markers, p_routePlanner, speedUnit, altitudeUnit, distanceUnit }) => {
 	const [mapObj, setMapObj] = React.useState(null);
 	const [mapBounds, setBounds] = React.useState(null);
 	const [mapCenter, setMapCenter] = React.useState(null);
@@ -48,9 +49,34 @@ const Map = ({ p_mapObj, p_flightLegs, p_markers, p_routePlanner }) => {
 			<WaypointAdder p_routePlanner={p_routePlanner}/>
 			<WaypointRemover p_routePlanner={p_routePlanner}/>
 			{p_markers.map((marker, index) => (
-				<WaypointMarker key={index} p_waypoint={marker} p_id={index} p_routePlanner={p_routePlanner}/>
+				<WaypointMarker key={index} 
+					p_waypoint={marker}
+					p_id={index}
+					p_routePlanner={p_routePlanner}
+					speedUnit={speedUnit}
+					altitudeUnit={altitudeUnit}/>
 			))}
 			<FlightLegs p_flightLegs={p_flightLegs}/>
+			{p_flightLegs.map((leg, index) => (
+				// leg = {
+				// 	coord:
+				// 	{
+				// 		start: {
+				// 			lat: lat0,
+				// 			lng: lng0,
+				// 		},
+				// 		end: {
+				// 			lat: lat1,
+				// 			lng: lng1
+				// 		}
+				// 	},
+				// 	heading: heading,
+				// 	distance: distance,
+				// 	speed: speed,
+				// 	time: time,
+				// }
+				<FlightLegLabel key={index} id={index} leg={leg} speedUnit={speedUnit} distanceUnit={distanceUnit}/>
+			))}
 		</MapContainer>
 	);
 };

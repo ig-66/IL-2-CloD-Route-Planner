@@ -11,7 +11,7 @@ const icon = new Icon({
 	popupAnchor: [0, iconSize * (-1)], // Anchor point for popups relative to the icon
 })
 
-function WaypointMarker({ p_waypoint, p_id, p_routePlanner }) {
+function WaypointMarker({ p_waypoint, p_id, altitudeUnit, speedUnit, p_routePlanner }) {
 	const [position, setPosition] = React.useState([p_waypoint.coord.lat, p_waypoint.coord.lng])
 	const markerRef = React.useRef(null)
 
@@ -67,9 +67,17 @@ function WaypointMarker({ p_waypoint, p_id, p_routePlanner }) {
 			ref={markerRef}>
 			<Popup minWidth={90}>
 				<div style={{ textAlign: 'center' }}>
-					<a style={{ fontWeight: 'bold' }}>{p_id + 1}</a><br />
-					<a>{Math.round(p_waypoint.altitude) + ' ' + 'm'}</a><br />
-					<a>{`${Math.round(p_waypoint.speed_ias)} ${'km/h'}`}</a><br />
+					{ p_id === 0 ?
+						<div>
+							<a style={{ fontWeight: 'bold' }}>Takeoff</a><br />
+						</div>
+						:
+						<div>
+							<a style={{ fontWeight: 'bold' }}>{p_id}</a><br />
+							<a>{Math.round(p_waypoint.altitude) + ' ' + altitudeUnit}</a><br />
+							<a>{`${Math.round(p_waypoint.speed_ias)} ${speedUnit}`}</a><br />
+						</div>
+					}
 				</div>
 			</Popup>
 		</Marker>

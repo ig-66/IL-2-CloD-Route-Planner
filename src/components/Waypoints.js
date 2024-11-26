@@ -1,7 +1,7 @@
 import React from "react";
 import AppStyle from '../AppStyle.js';
 
-const Waypoints = ({ p_waypoints, p_flightLegs, p_distanceUnit }) => {
+const Waypoints = ({ leg, distanceUnit, speedUnit }) => {
 
 	// var waypointObj = {
 	// 		x: 10,
@@ -21,24 +21,21 @@ const Waypoints = ({ p_waypoints, p_flightLegs, p_distanceUnit }) => {
 
 	return (
 		<div style={AppStyle.nonInteractableFullscreenComp}>
-			{p_flightLegs.map((leg, index) => (
-				<div
-					key={index}
-					className="Label"
-					style={{
-						... AppStyle.label,
-						left: leg.coord.x1,
-						top: leg.coord.y1,
-						transform: 'translate(-50%, 15%)',
-					}}
-				>
-					<a style={{ fontWeight: 'bold' }}>{index + 1}</a><br/>
-					<a>{Math.round(leg.heading) % 360 + '°'}</a><br/>
-					<a>{Math.round(leg.distance) + ' ' + p_distanceUnit}</a><br/>
-					<a>{`${Math.round(leg.speed)} ${p_distanceUnit === 'km' ? 'km/h' : 'mph'}`}</a><br/>
-					<a>{leg.time}</a><br/>
-				</div>
-			))}
+			<div
+				className="Label"
+				style={{
+					... AppStyle.label,
+					left: leg.coord.end.lng,
+					top: leg.coord.end.lat,
+					transform: 'translate(-50%, 15%)',
+				}}
+			>
+				<a style={{ fontWeight: 'bold' }}>{index + 1}</a><br/>
+				<a>{Math.round(leg.heading) % 360 + '°'}</a><br/>
+				<a>{Math.round(leg.distance) + ' ' + distanceUnit}</a><br/>
+				<a>{Math.round(leg.speed)} + ' ' + {speedUnit}</a><br/>
+				<a>{leg.time}</a><br/>
+			</div>
 		</div>
 	);
 };

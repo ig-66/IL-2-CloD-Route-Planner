@@ -77,8 +77,15 @@ function App() {
 				onSetTAS={(tas) => setBaseSpeed(tas)}
 				/> */}
 			<Keybinds/>
-			<Map p_mapObj={mapObj} p_flightLegs={flightLegs} p_markers={markers} p_routePlanner={routePlanner}/>
-			{/* <Waypoints p_waypoints={waypoints} p_flightLegs={flightLegs} p_distanceUnit={distanceUnit}/> */}
+			<Map 
+				p_mapObj={mapObj}
+				p_flightLegs={flightLegs}
+				p_markers={markers}
+				p_routePlanner={routePlanner}
+				speedUnit={speedUnit}
+				altitudeUnit={altitudeUnit}
+				distanceUnit={distanceUnit}
+				/>
 		</div>
 	);
 }
