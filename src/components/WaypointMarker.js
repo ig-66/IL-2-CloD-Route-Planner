@@ -12,8 +12,13 @@ const icon = new Icon({
 })
 
 function WaypointMarker({ p_waypoint, p_id, altitudeUnit, speedUnit, p_routePlanner }) {
+	const [wpMarker, setWPMarker] = React.useState(p_waypoint)
 	const [position, setPosition] = React.useState([p_waypoint.coord.lat, p_waypoint.coord.lng])
 	const markerRef = React.useRef(null)
+
+	React.useEffect(() => {
+		setWPMarker(p_waypoint)
+	}, [p_waypoint])
 
 	const eventHandlers = React.useMemo(
 		() => ({
@@ -26,8 +31,8 @@ function WaypointMarker({ p_waypoint, p_id, altitudeUnit, speedUnit, p_routePlan
 							lat: marker.getLatLng().lat,
 							lng: marker.getLatLng().lng
 						},
-						altitude: p_waypoint.altitude,
-						speed_ias: p_waypoint.speed_ias 
+						altitude: wpMarker.altitude,
+						speed_ias: wpMarker.speed_ias 
 					}
 					setPosition(marker.getLatLng());
 					p_routePlanner.modifyMarker(p_id, newMarkerProps)
@@ -49,7 +54,7 @@ function WaypointMarker({ p_waypoint, p_id, altitudeUnit, speedUnit, p_routePlan
 				}
 			},
 		}),
-		[],
+		[wpMarker],
 	)
 
 	useEffect(() => {
