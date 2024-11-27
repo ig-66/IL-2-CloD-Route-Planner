@@ -4,7 +4,7 @@ const Header = ({ currentMap, isMagnetic,
 	speedUnit, altitudeUnit, distanceUnit, 
 	speedUnitOptions, altitudeUnitOptions, distanceUnitOptions, mapOptions,
 	onMapSelect, onSpeedUnitSelect, onAltitudeUnitSelect, 
-	onDistanceUnitSelect, onHeadingTypeChange }) => {
+	onDistanceUnitSelect, onHeadingTypeChange, onRemoveAllWaypoints }) => {
 	
 	const handleMapChange = (event) => {
 		onMapSelect(event.target.value)
@@ -75,6 +75,17 @@ const Header = ({ currentMap, isMagnetic,
 					))
 				}				
 			</select>
+			<button 
+				style={{ 
+					backgroundColor: 'red',
+					color: 'white',
+					fontWeight: 'bolder',
+					borderRadius: 5,
+					padding: 2,
+					paddingInline: 7,
+				}}
+				onClick={onRemoveAllWaypoints}
+			>Remove All Waypoints</button>
 		</header>
 	);
 }

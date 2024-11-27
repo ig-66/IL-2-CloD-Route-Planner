@@ -67,6 +67,8 @@ function App() {
 
 				onMapSelect={(mapName) => changeMap(mapName)}
 
+				onRemoveAllWaypoints={() => routePlanner.removeAllMarkers()}
+
 				onHeadingTypeChange={(isMag) => setUseMagneticHeading(isMag)}
 				/>
 			<TASCalculator 
