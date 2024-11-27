@@ -6,7 +6,7 @@ import WaypointMarker from "./WaypointMarker";
 import FlightLegs from "./FlightLegs";
 import FlightLegLabel from "./FlightLegLabel";
 
-const Map = ({ p_mapObj, p_flightLegs, p_markers, p_routePlanner, speedUnit, altitudeUnit, distanceUnit }) => {
+const Map = ({ p_mapObj, p_flightLegs, p_markers, p_routePlanner, speedUnit, altitudeUnit, distanceUnit, useMagneticHDG }) => {
 	const [mapObj, setMapObj] = React.useState(null);
 	const [mapBounds, setBounds] = React.useState(null);
 	const [mapCenter, setMapCenter] = React.useState(null);
@@ -58,7 +58,14 @@ const Map = ({ p_mapObj, p_flightLegs, p_markers, p_routePlanner, speedUnit, alt
 			))}
 			<FlightLegs p_flightLegs={p_flightLegs}/>
 			{p_flightLegs.map((leg, index) => (
-				<FlightLegLabel key={index} id={index} leg={leg} speedUnit={speedUnit} distanceUnit={distanceUnit} altitudeUnit={altitudeUnit}/>
+				<FlightLegLabel 
+					key={index} 
+					id={index} 
+					leg={leg} 
+					speedUnit={speedUnit} 
+					distanceUnit={distanceUnit} 
+					altitudeUnit={altitudeUnit}
+					mapVariation={useMagneticHDG ? mapObj.magVariation : 0}/>
 			))}
 		</MapContainer>
 	);

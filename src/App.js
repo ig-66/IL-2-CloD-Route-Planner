@@ -12,7 +12,7 @@ const baseAltitude = 1000
 function App() {
 
 	const [mapObj, setMapObj] = useState(null);
-	const [isMagneticHeading, setMagneticHeading] = useState(false);
+	const [useMagneticHeading, setUseMagneticHeading] = useState(false);
 	const [implementedMaps, setImplementedMaps] = useState(null)
 
 	// Units:
@@ -49,7 +49,7 @@ function App() {
 		<div className="App">
 			<Header 
 				currentMap={mapObj.name}
-				isMagnetic={isMagneticHeading}
+				isMagnetic={useMagneticHeading}
 				
 				speedUnitOptions={['kph', 'mph', 'knots']}
 				altitudeUnitOptions={['m', 'ft']}
@@ -67,7 +67,7 @@ function App() {
 
 				onMapSelect={(mapName) => changeMap(mapName)}
 
-				onHeadingTypeChange={(isMag) => setMagneticHeading(isMag)}
+				onHeadingTypeChange={(isMag) => setUseMagneticHeading(isMag)}
 				/>
 			<TASCalculator 
 				initialSpeed={baseSpeed}
@@ -84,6 +84,7 @@ function App() {
 				speedUnit={speedUnit}
 				altitudeUnit={altitudeUnit}
 				distanceUnit={distanceUnit}
+				useMagneticHDG={useMagneticHeading}
 				/>
 		</div>
 	);

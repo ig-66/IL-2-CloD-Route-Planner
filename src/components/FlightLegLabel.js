@@ -2,7 +2,7 @@ import React from "react";
 import { Marker } from "react-leaflet";
 import L from "leaflet";
 
-function FlightLegs({ leg, id, distanceUnit, speedUnit, altitudeUnit }) {
+function FlightLegs({ leg, id, distanceUnit, speedUnit, altitudeUnit, mapVariation }) {
 
 	const createLabelIcon = (leg) => {
 		const style = `
@@ -26,7 +26,7 @@ function FlightLegs({ leg, id, distanceUnit, speedUnit, altitudeUnit }) {
 	const labelContent = `
 		<div style="${style}">
 			<strong>${id + 1}</strong><br/>
-			<a style="${textStyle}">${Math.round(leg.heading) % 360}°</a><br/>
+			<a style="${textStyle}">${Math.round(leg.heading + mapVariation) % 360}°</a><br/>
 			<a style="${textStyle}">${Math.round(leg.distance)} ${distanceUnit}</a><br/>
 			<a style="${textStyle}">${Math.round(leg.altitude)} ${altitudeUnit}</a><br/>
 			<a style="${textStyle}">${Math.round(leg.speed)} ${speedUnit}</a><br/>
