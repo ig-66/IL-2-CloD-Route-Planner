@@ -9,8 +9,8 @@ function FlightLegs({ leg, id, distanceUnit, speedUnit, altitudeUnit, mapVariati
 			background-color: rgba(255, 255, 255, 0.9);
 			padding: 5px 10px;
 			border: 1px solid #ccc;
-			border-radius: 5px;
-			font-size: 12px;
+			border-radius: 7px;
+			font-size: 10px;
 			text-align: center;
 			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 			pointer-events: none;
@@ -18,12 +18,13 @@ function FlightLegs({ leg, id, distanceUnit, speedUnit, altitudeUnit, mapVariati
 			position: absolute;
 			transform: translate(-50%, 15%);
 			white-space: nowrap;
+			line-height: 1.4;
 	`;
 		const textStyle = `
 			color: black;
 		`
 
-	const labelContent = `
+		const labelContent = `
 		<div style="${style}">
 			<strong>${id + 1}</strong><br/>
 			<a style="${textStyle}">${Math.round(leg.heading + mapVariation) % 360}°</a><br/>
