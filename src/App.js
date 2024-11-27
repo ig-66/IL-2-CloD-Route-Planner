@@ -6,13 +6,13 @@ import Keybinds from './components/Keybinds';
 import TASCalculator from './components/TASCalculator';
 import RoutePlanner from './utils/RoutePlanner';
 
+const baseSpeed = 350
+const baseAltitude = 1000
+
 function App() {
 
 	const [mapObj, setMapObj] = useState(null);
-	// const [distanceUnit, selectDistanceUnit] = useState('km');
-	const [baseSpeed, setBaseSpeed] = useState(400);
 	const [isMagneticHeading, setMagneticHeading] = useState(false);
-	
 	const [implementedMaps, setImplementedMaps] = useState(null)
 
 	// Units:
@@ -27,7 +27,7 @@ function App() {
 	const routePlannerRef = useRef(null);
 
 	if (!routePlannerRef.current) {
-		routePlannerRef.current = new RoutePlanner(setFlightLegs, setMarkers, setSpeedUnit, setAltitudeUnit, setDistanceUnit, 'metric', 1000, baseSpeed);
+		routePlannerRef.current = new RoutePlanner(setFlightLegs, setMarkers, setSpeedUnit, setAltitudeUnit, setDistanceUnit, baseAltitude, baseSpeed);
 	}
 	const routePlanner = routePlannerRef.current;
 
@@ -48,7 +48,6 @@ function App() {
 	return (
 		<div className="App">
 			<Header 
-				baseSpeed={baseSpeed}
 				currentMap={mapObj.name}
 				isMagnetic={isMagneticHeading}
 				
@@ -68,14 +67,14 @@ function App() {
 
 				onMapSelect={(mapName) => changeMap(mapName)}
 
-				onSpeedChange={setBaseSpeed}
 				onHeadingTypeChange={(isMag) => setMagneticHeading(isMag)}
 				/>
-			{/* <TASCalculator 
-				p_speed={baseSpeed}
-				p_unit={distanceUnit}
-				onSetTAS={(tas) => setBaseSpeed(tas)}
-				/> */}
+			<TASCalculator 
+				initialSpeed={baseSpeed}
+				speedUnit={speedUnit}
+				initialAltitude={baseAltitude}
+				altitudeUnit={altitudeUnit}
+				/>
 			<Keybinds/>
 			<Map 
 				p_mapObj={mapObj}

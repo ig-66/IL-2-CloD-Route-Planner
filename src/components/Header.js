@@ -1,21 +1,14 @@
 import React from 'react'; // Importing Modules
 
-const Header = ({ currentMap, baseSpeed, isMagnetic, 
+const Header = ({ currentMap, isMagnetic, 
 	speedUnit, altitudeUnit, distanceUnit, 
 	speedUnitOptions, altitudeUnitOptions, distanceUnitOptions, mapOptions,
-	onMapSelect, onSpeedUnitSelect, onAltitudeUnitSelect, onDistanceUnitSelect, 
-	onSpeedChange, onHeadingTypeChange }) => {
+	onMapSelect, onSpeedUnitSelect, onAltitudeUnitSelect, 
+	onDistanceUnitSelect, onHeadingTypeChange }) => {
 	
 	const handleMapChange = (event) => {
 		onMapSelect(event.target.value)
 	};
-
-	const handleSpeedChange = (event) => {
-		let newSpeed = event.target.value;
-		if (newSpeed > 0) {
-			onSpeedChange(newSpeed);
-		}
-	}
 
 	const handleHeadingChange = (event) => {
 		const isMagnetic = event.target.value === "true"; // REQUIRED: ensures value is boolean
@@ -82,15 +75,6 @@ const Header = ({ currentMap, baseSpeed, isMagnetic,
 					))
 				}				
 			</select>
-			<label style={{paddingLeft: 10, paddingRight: 4}}>Speed {speedUnit}</label>
-			<input
-				type="number"
-				id="numberInput"
-				value={Math.round(baseSpeed)}
-				onChange={handleSpeedChange}
-				placeholder={baseSpeed}
-				size={3}
-			/>
 		</header>
 	);
 }

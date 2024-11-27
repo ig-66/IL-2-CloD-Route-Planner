@@ -185,7 +185,7 @@ const FlightMath = {
 	 * @param {boolean} isMetric - Whether the passed `altitude` and `ias` are in metric unit or not. 
 	 * @returns True Air Speed (TAS) in metric (km/h) or imperial (mph).
 	 */
-	calculateTAS(altitude, ias, isMetric) {
+	calculateTAS(altitude, altitudeUnit, ias) {
 		let tas;
 
 		/**
@@ -196,7 +196,7 @@ const FlightMath = {
 		 *  	This is the figure you should enter in the bombsight"
 		*/
 
-		if (isMetric)
+		if (altitudeUnit === 'm')
 			tas = ias * (((altitude / 500) * 0.03) + 1)
 		else
 			tas = ias * (((this.convertFeetToMeter(altitude) / 500) * 0.03) + 1)

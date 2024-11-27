@@ -1,41 +1,6 @@
 import Maps from "../assets/maps/Maps";
 import FlightMath from "./FlightMath";
-
-const conversionTable = {
-	speed: {
-		kph: {
-			toMph: 0.621371,
-			toKnots: 0.539957
-		},
-		mph: {
-			tokph: 1.60934,
-			toKnots: 0.868976
-		},
-		knots: {
-			toKph: 1.852,
-			toMph: 1.15078
-		}
-	},
-	altitude: 
-	{
-		metersToFeet: 3.28084,
-		feetToMeters: 0.3048
-	},
-	distance: {
-		km: {
-			toMiles: 0.621371,
-			toNauticalMiles: 0.539957
-		},
-		mi: {
-			toKm: 1.60934,
-			toNauticalMiles: 0.868976
-		},
-		nm: {
-			toKm: 1.852,
-			toMiles: 1.15078
-		}
-	}
-} 
+import UnitConversion from "./UnitConversion";
 
 class RoutePlanner {
 
@@ -56,13 +21,12 @@ class RoutePlanner {
 	 * @param {number} defaultAltitude Initial/default altitude. 
 	 * @param {number} defaultAirspeed Initial/defualt speed.
 	 */
-	constructor(setFlightLegCb, setMarkerCb, setSpeedUnitCb, setAltitudeUnitCb, setDistanceUnitCb, unit = 'metric', defaultAltitude = 1000, defaultAirspeed = 400) {
+	constructor(setFlightLegCb, setMarkerCb, setSpeedUnitCb, setAltitudeUnitCb, setDistanceUnitCb, defaultAltitude = 1000, defaultAirspeed = 400) {
 		this.setNewFlightLegs = setFlightLegCb
 		this.setNewMarkers = setMarkerCb
 		this.setSpeedUnit = setSpeedUnitCb
 		this.setAltitudeUnit = setAltitudeUnitCb
 		this.setDistanceUnit = setDistanceUnitCb
-		this.unit = unit
 		this.defaultAltitude = defaultAltitude
 		this.defaultAirspeed = defaultAirspeed
 
@@ -141,38 +105,9 @@ class RoutePlanner {
 
 	changeSpeedUnit(speedUnit)
 	{
-		var conversionValue = 1
-		switch (speedUnit) {
-			case 'kph':
-				if (this.#speedUnit === 'kph')
-					return
-				else if (this.#speedUnit === 'mph')
-					conversionValue = conversionTable.speed.mph.tokph
-				else if (this.#speedUnit === 'knots')
-					conversionValue = conversionTable.speed.knots.toKph
-				break
-			case 'mph':
-				if (this.#speedUnit === 'mph')
-					return
-				else if (this.#speedUnit === 'kph')
-					conversionValue = conversionTable.speed.kph.toMph
-				else if (this.#speedUnit === 'knots')
-					conversionValue = conversionTable.speed.knots.toMph
-				break
-			case 'knots':
-				if (this.#speedUnit === 'knots')
-					return
-				else if (this.#speedUnit === 'kph')
-					conversionValue = conversionTable.speed.kph.toKnots
-				else if (this.#speedUnit === 'mph')
-					conversionValue = conversionTable.speed.mph.toKnots
-				break
-			default:
-				return
-		}
 		var newMarkers = this.#markers.map((marker) => ({
 			...marker,
-			speed_ias: marker.speed_ias * conversionValue
+			speed_ias: marker.speed_ias * UnitConversion.getSpeedConversionValue(speedUnit, this.#speedUnit)
 		}))
 
 		this.#markers = [...newMarkers]
@@ -185,28 +120,10 @@ class RoutePlanner {
 
 	changeAltitudeUnit(altitudeUnit)
 	{
-		var conversionValue = 1
-		switch (altitudeUnit) {
-			case 'ft':
-				if (this.#altitudeUnit === 'ft')
-					return
-				else if (this.#altitudeUnit === 'm')
-					conversionValue = conversionTable.altitude.metersToFeet
-				break
-			case 'm':
-				if (this.#altitudeUnit === 'm')
-					return
-				else if (this.#altitudeUnit === 'ft')
-					conversionValue = conversionTable.altitude.feetToMeters
-				break
-
-			default:
-				return
-		}
 		// convert on markers
 		var newMarkers = this.#markers.map((marker) => ({
 			...marker,
-			altitude: marker.altitude * conversionValue
+			altitude: marker.altitude * UnitConversion.getAltitudeConversionValue(altitudeUnit, this.#altitudeUnit)
 		}))
 
 		this.#markers = [...newMarkers]
@@ -219,36 +136,10 @@ class RoutePlanner {
 
 	changeDistanceUnit(distanceUnit)
 	{
-		var conversionValue = 1
-		switch (distanceUnit) {
-			case 'km':
-				if (this.#distanceUnit === 'mi')
-					conversionValue = conversionTable.distance.mi.toKm
-				else if (this.#distanceUnit === 'nm')
-					conversionValue = conversionTable.distance.nm.toKm
-				break
-			case 'mi':
-				if (this.#distanceUnit === 'km')
-					conversionValue = conversionTable.distance.km.toMiles
-				else if (this.#distanceUnit === 'nm')
-					conversionValue = conversionTable.distance.nm.toMiles
-				break
-
-			case 'nm':
-				if (this.#distanceUnit === 'km')
-					conversionValue = conversionTable.distance.km.toNauticalMiles
-				else if (this.#distanceUnit === 'mi')
-					conversionValue = conversionTable.distance.mi.toNauticalMiles
-				break
-			
-			default:
-				return
-		}
-
 		// convert on flight legs
 		var newFlightLegs = this.#flightLegs.map((leg) => ({
 			...leg,
-			distance: leg.distance * conversionValue
+			distance: leg.distance * UnitConversion.getDistanceConversionValue(distanceUnit, this.#distanceUnit)
 		}))
 
 		this.#flightLegs = [...newFlightLegs]
@@ -311,9 +202,7 @@ class RoutePlanner {
 
 			let heading = FlightMath.getLegHeading(lastMarker.coord.lng, lastMarker.coord.lat, marker.coord.lng, marker.coord.lat)
 
-			let distance = FlightMath.getLegDistance(lastMarker.coord.lng, lastMarker.coord.lat, marker.coord.lng, marker.coord.lat, this.mapRatio, this.unit)
-
-			// let speed = index >= this.#flightLegs.length || !this.#flightLegs[index] ? this.defaultAirspeed : this.#flightLegs[index].speed ?? this.#flightLegs[index - 1].speed ?? this.defaultAirspeed
+			let distance = FlightMath.getLegDistance(lastMarker.coord.lng, lastMarker.coord.lat, marker.coord.lng, marker.coord.lat, this.mapRatio, this.#distanceUnit)
 
 			let speed = index >= this.#markers.length || !this.#markers[index] ? this.defaultAirspeed : this.#markers[index].speed_ias
 

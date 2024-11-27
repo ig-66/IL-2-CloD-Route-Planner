@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
 import AppStyle from '../AppStyle.js';
 import FlightMath from '../utils/FlightMath.js';
+import UnitConversion from '../utils/UnitConversion.js';
 
-const TASCalculator = ({ p_unit, p_speed, onSetTAS }) => {
+const TASCalculator = ({ initialSpeed, speedUnit, initialAltitude, altitudeUnit }) => {
+	const [speed, setSpeed] = useState(initialSpeed)
+	const [altitude, setAltitude] = useState(initialAltitude);
+	
+	const [currentAltitudeUnit, setCurrentAltitudeUnit] = useState(null)
+	const [currentSpeedUnit, setCurrentSpeedUnit] = useState(null)
 
-	const [speed, setSpeed] = useState(p_speed);
-	const [TAS, setTAS] = useState()
-	const [altitude, setAltitude] = useState(1000);
-	const [altitudeUnit, setAltitudeUnit] = useState('m');
+	const [TAS, setTAS] = useState(null)
 
 	function handleAltitudeChange(event) {
 		let newAltitude = event.target.value;
@@ -25,23 +28,37 @@ const TASCalculator = ({ p_unit, p_speed, onSetTAS }) => {
 	}
 
 	useEffect(() => {
-		if (p_unit === 'km' && altitudeUnit === 'ft')
+		if (!currentAltitudeUnit)
 		{
-			setAltitude(FlightMath.convertFeetToMeter(altitude))
-			setSpeed(FlightMath.convertMphToKph(speed))
-			setAltitudeUnit('m');
+			setCurrentAltitudeUnit(altitudeUnit)
+			return
 		}
-		else if (p_unit === 'mi' && altitudeUnit === 'm')
-		{
-			setAltitude(FlightMath.convertMeterToFeet(altitude))
-			setSpeed(FlightMath.convertKphToMph(speed))
-			setAltitudeUnit('ft');
-		}
-	}, [p_unit])
+
+		if (altitudeUnit === currentAltitudeUnit)
+			return
+		
+		setAltitude(altitude * UnitConversion.getAltitudeConversionValue(altitudeUnit, currentAltitudeUnit))
+		setCurrentAltitudeUnit(altitudeUnit)
+
+	}, [altitudeUnit])
 
 	useEffect(() => {
-		let isMetric = p_unit === 'km' ? true : false;
-		setTAS(FlightMath.calculateTAS(altitude, speed, isMetric));
+		if (!currentSpeedUnit)
+		{
+			setCurrentSpeedUnit(speedUnit)
+			return
+		}
+
+		if (speedUnit === currentSpeedUnit)
+			return
+		
+		setSpeed(speed * UnitConversion.getSpeedConversionValue(speedUnit, currentSpeedUnit))
+		setCurrentSpeedUnit(speedUnit)
+
+	}, [speedUnit])
+
+	useEffect(() => {
+		setTAS(FlightMath.calculateTAS(altitude, altitudeUnit, speed));
 	}, [altitude, speed])
 
 	return (
@@ -76,12 +93,11 @@ const TASCalculator = ({ p_unit, p_speed, onSetTAS }) => {
 					onChange={handleSpeedChange}
 					placeholder={speed}
 					size={4}
-				/><a> {p_unit === 'km' ? 'km/h' : 'mph'}</a>
+				/><a> {speedUnit}</a>
 				<br/>
-				<a>TAS: {Math.round(TAS)} {p_unit === 'km' ? 'km/h' : 'mph'}</a>
+				<a>TAS: {Math.round(TAS)} {speedUnit}</a>
 				<br/>
 			</div>
-			<button style={{marginBottom: '5px' }} onClick={() => onSetTAS(Math.round(TAS))}>Set Speed</button>
 		</div>
 	)
 }
