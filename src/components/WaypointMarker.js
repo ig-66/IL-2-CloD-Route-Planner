@@ -32,7 +32,7 @@ function WaypointMarker({ p_waypoint, p_id, altitudeUnit, speedUnit, p_routePlan
 							lng: marker.getLatLng().lng
 						},
 						altitude: wpMarker.altitude,
-						speed_ias: wpMarker.speed_ias 
+						speed_ias: wpMarker.speed_ias
 					}
 					setPosition(marker.getLatLng());
 					p_routePlanner.modifyMarker(p_id, newMarkerProps)
@@ -61,6 +61,44 @@ function WaypointMarker({ p_waypoint, p_id, altitudeUnit, speedUnit, p_routePlan
 		setPosition([p_waypoint.coord.lat, p_waypoint.coord.lng])
 	}, [p_waypoint])
 
+	const onSpeedChange = (e) => {
+		let newSpeed = e.target.value
+
+		if (newSpeed <= 0)
+			return
+
+		const newMarkerProps = {
+			coord: {
+				lat: wpMarker.coord.lat,
+				lng: wpMarker.coord.lng
+			},
+			altitude: wpMarker.altitude,
+			speed_ias: newSpeed
+		}
+		p_routePlanner.modifyMarker(p_id, newMarkerProps)
+	}
+
+	const onAltitudeChange = (e) => {
+		let newAltitude = e.target.value
+
+		if (newAltitude < 0)
+			return
+
+		const newMarkerProps = {
+			coord: {
+				lat: wpMarker.coord.lat,
+				lng: wpMarker.coord.lng
+			},
+			altitude: newAltitude,
+			speed_ias: wpMarker.speed_ias
+		}
+		p_routePlanner.modifyMarker(p_id, newMarkerProps)
+	}
+
+	const onRemoveWP = (e) => {
+		p_routePlanner.removeMarker(p_id)
+	}
+
 	if (!position) return;
 
 	return (
@@ -72,17 +110,37 @@ function WaypointMarker({ p_waypoint, p_id, altitudeUnit, speedUnit, p_routePlan
 			ref={markerRef}>
 			<Popup minWidth={90}>
 				<div style={{ textAlign: 'center' }}>
-					{ p_id === 0 ?
+					{p_id === 0 ?
 						<div>
 							<a style={{ fontWeight: 'bold' }}>Takeoff</a><br />
 						</div>
 						:
 						<div>
 							<a style={{ fontWeight: 'bold' }}>{p_id}</a><br />
-							<a>{Math.round(p_waypoint.altitude) + ' ' + altitudeUnit}</a><br />
-							<a>{`${Math.round(p_waypoint.speed_ias)} ${speedUnit}`}</a><br />
+							<input
+								type="number"
+								id="altitudeInput"
+								value={Math.round(wpMarker.altitude)}
+								onChange={onAltitudeChange}
+								size={5}
+							/> {altitudeUnit}<br />
+							<input
+								type="number"
+								id="speedInput"
+								value={Math.round(wpMarker.speed_ias)}
+								onChange={onSpeedChange}
+								size={4}
+							/> {speedUnit}<br />
 						</div>
 					}
+					<button
+						onClick={onRemoveWP}
+						style={{
+							backgroundColor: 'red',
+							color: 'white',
+							fontWeight: 'bolder'
+						}}
+					>Remove Waypoint</button>
 				</div>
 			</Popup>
 		</Marker>
