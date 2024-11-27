@@ -33,7 +33,6 @@ function App() {
 
 	useEffect(() => {
 		setMapObj(routePlanner.getMapObj()) // Get the default map object
-		console.log('Implemented maps: ' + JSON.stringify(routePlanner.getMaps()))
 		setImplementedMaps(routePlanner.getMaps())
 	}, [routePlanner]);
 

@@ -206,7 +206,10 @@ class RoutePlanner {
 
 			let speed = index >= this.#markers.length || !this.#markers[index] ? this.defaultAirspeed : this.#markers[index].speed_ias
 
-			let time = FlightMath.getLegTimeString(distance, speed)
+			let convertedSpeed = speed * UnitConversion.getSpeedConversionValue('kph', this.#speedUnit)
+			let convertedDistance = distance * UnitConversion.getDistanceConversionValue('km', this.#distanceUnit)
+
+			let time = FlightMath.getLegTimeString(convertedDistance, convertedSpeed)
 
 			let altitude = index >= this.#markers.length || !this.#markers[index] ? this.defaultAltitude : this.#markers[index].altitude
 

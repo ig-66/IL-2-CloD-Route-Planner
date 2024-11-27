@@ -93,13 +93,13 @@ const UnitConversion = {
 		switch (newUnit) {
 			case 'ft':
 				if (oldUnit === 'ft')
-					return
+					break
 				else if (oldUnit === 'm')
 					conversionValue = this.table.altitude.metersToFeet
 				break
 			case 'm':
 				if (oldUnit === 'm')
-					return
+					break
 				else if (oldUnit === 'ft')
 					conversionValue = this.table.altitude.feetToMeters
 				break
@@ -126,7 +126,7 @@ const UnitConversion = {
 		switch (newUnit) {
 			case 'kph':
 				if (oldUnit === 'kph')
-					return
+					break
 				else if (oldUnit === 'mph')
 					conversionValue = this.table.speed.mph.tokph
 				else if (oldUnit === 'knots')
@@ -134,7 +134,7 @@ const UnitConversion = {
 				break
 			case 'mph':
 				if (oldUnit === 'mph')
-					return
+					break
 				else if (oldUnit === 'kph')
 					conversionValue = this.table.speed.kph.toMph
 				else if (oldUnit === 'knots')
@@ -142,7 +142,7 @@ const UnitConversion = {
 				break
 			case 'knots':
 				if (oldUnit === 'knots')
-					return
+					break
 				else if (oldUnit === 'kph')
 					conversionValue = this.table.speed.kph.toKnots
 				else if (oldUnit === 'mph')

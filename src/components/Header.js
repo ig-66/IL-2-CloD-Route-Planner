@@ -45,8 +45,8 @@ const Header = ({ currentMap, isMagnetic,
 		>
 			<select value={currentMap} onChange={handleMapChange} style={{ marginInline: '3px' }}>
 				{
-					mapOptions.map((mapOption) => (
-						<option value={mapOption.name}>{mapOption.displayName}</option>
+					mapOptions.map((mapOption, index) => (
+						<option key={index} value={mapOption.name}>{mapOption.displayName}</option>
 					))
 				}
 			</select>
@@ -56,22 +56,22 @@ const Header = ({ currentMap, isMagnetic,
 			</select>
 			<select value={speedUnit} onChange={handleSpeedUnitChange} style={{ marginInline: '3px' }}>
 				{
-					speedUnitOptions.map((unit) => (
-						<option value={unit}>Speed {unit}</option>
+					speedUnitOptions.map((unit, index) => (
+						<option key={index} value={unit}>Speed {unit}</option>
 					))
 				}
 			</select>
 			<select value={altitudeUnit} onChange={handleAltUnitChange} style={{ marginInline: '3px' }}>
 				{
-					altitudeUnitOptions.map((unit) => (
-						<option value={unit}>Altitude {unit}</option>
+					altitudeUnitOptions.map((unit, index) => (
+						<option key={index} value={unit}>Altitude {unit}</option>
 					))
 				}
 			</select>
 			<select value={distanceUnit} onChange={handleDistanceUnitChange} style={{ marginInline: '3px' }}>
 				{
-					distanceUnitOptions.map((unit) => (
-						<option value={unit}>Distance {unit}</option>
+					distanceUnitOptions.map((unit, index) => (
+						<option key={index} value={unit}>Distance {unit}</option>
 					))
 				}				
 			</select>
