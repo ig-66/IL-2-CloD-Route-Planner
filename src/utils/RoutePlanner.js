@@ -209,9 +209,9 @@ class RoutePlanner {
 			let convertedSpeed = speed * UnitConversion.getSpeedConversionValue('kph', this.#speedUnit)
 			let convertedDistance = distance * UnitConversion.getDistanceConversionValue('km', this.#distanceUnit)
 
-			let time = FlightMath.getLegTimeString(convertedDistance, convertedSpeed)
-
 			let altitude = index >= this.#markers.length || !this.#markers[index] ? this.defaultAltitude : this.#markers[index].altitude
+			
+			let time = FlightMath.getLegTimeSeconds(convertedDistance, FlightMath.calculateTAS(altitude, this.#altitudeUnit, convertedSpeed))
 
 			let newFlightLeg = {
 				coord:

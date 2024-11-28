@@ -1,6 +1,7 @@
 import React from "react";
 import { Marker } from "react-leaflet";
 import L from "leaflet";
+import FlightMath from "../utils/FlightMath";
 
 function FlightLegs({ leg, id, distanceUnit, speedUnit, altitudeUnit, mapVariation }) {
 
@@ -31,7 +32,7 @@ function FlightLegs({ leg, id, distanceUnit, speedUnit, altitudeUnit, mapVariati
 			<a style="${textStyle}">${Math.round(leg.distance)} ${distanceUnit}</a><br/>
 			<a style="${textStyle}">${Math.round(leg.altitude)} ${altitudeUnit}</a><br/>
 			<a style="${textStyle}">${Math.round(leg.speed)} ${speedUnit}</a><br/>
-			<a style="${textStyle}">${leg.time}</a><br/>
+			<a style="${textStyle}">${FlightMath.getLegTimeString(leg.time)}</a><br/>
 		</div>
 	`;
 

@@ -10,17 +10,6 @@ function radiansToDegrees(radians) {
 	return (degrees + 360) % 360;
 }
 
-/**
- * Get the flight leg time/duration, in seconds.
- * 
- * @param {number} distance - distance, in metric (kilometers) or imperial (miles).
- * @param {number} speed - speed, in metric (km/h) or imperial (mph).
- * @returns Flight leg time, in seconds.
- */
-function getLegTimeSeconds(distance, speed) {
-	return distance / (speed / 3600);
-}
-
 const FlightMath = {
 	/**
 	 * Get the leg distance, in kilometers or mile, with the given coordinates.
@@ -58,7 +47,7 @@ const FlightMath = {
 	 * @returns 
 	 */
 	getLegHeading(x0, y0, x1, y1) {
-		var angle = radiansToDegrees(Math.atan2((y1 - y0)*-1, (x1 - x0))) + 90;
+		var angle = radiansToDegrees(Math.atan2((y1 - y0) * -1, (x1 - x0))) + 90;
 
 		if (angle >= 360)
 			angle -= 360;
@@ -67,18 +56,24 @@ const FlightMath = {
 	},
 
 	/**
-	 * Get the flight leg time string.
+	 * Get the flight leg time/duration, in seconds.
 	 * 
 	 * @param {number} distance - distance, in metric (kilometers) or imperial (miles).
 	 * @param {number} speed - speed, in metric (km/h) or imperial (mph).
+	 * @returns Flight leg time, in seconds.
+	 */
+	getLegTimeSeconds(distance, speed) {
+		return distance / (speed / 3600);
+	},
+
+	/**
+	 * Get the flight leg time string.
+	 * 
+	 * @param {number} legTimeSeconds - Leg time, in seconds.
 	 * @returns Time string in the format: "hh:mm:ss" or "mm:ss".
 	 */
-	getLegTimeString(distance, speed) {
-		const legTimeSeconds = getLegTimeSeconds(distance, speed);
-
-		const hours = Math.floor(legTimeSeconds / 3600);
-		const minutes = Math.floor((legTimeSeconds % 3600) / 60);
-		const seconds = Math.floor(legTimeSeconds % 60);
+	getLegTimeString(legTimeSeconds) {
+		let { hours, minutes, seconds } = this.parseSecondsToHMS(legTimeSeconds)
 
 		let legTimeString;
 		if (hours > 0) {
@@ -88,6 +83,19 @@ const FlightMath = {
 		}
 
 		return legTimeString;
+	},
+
+	/**
+	 * Parse the given amount of seconds into hours, minutes and seconds.
+	 * 
+	 * @param {number} seconds Amount of seconds to be converted.
+	 * @returns - {hours, minutes, seconds}
+	 */
+	parseSecondsToHMS(secondsAmount) {
+		const hours = Math.floor(secondsAmount / 3600)
+		const minutes = Math.floor((secondsAmount % 3600) / 60)
+		const seconds = Math.floor(secondsAmount % 60)
+		return { hours, minutes, seconds }
 	},
 
 	/**
@@ -136,8 +144,7 @@ const FlightMath = {
 	 * @param {number} kph - speed, in km/h.
 	 * @returns converted speed, in knots.
 	 */
-	convertKphToKnots(kph)
-	{
+	convertKphToKnots(kph) {
 		return kph / 1.852
 	},
 
@@ -147,19 +154,17 @@ const FlightMath = {
 	 * @param {number} mph - speed, in mph.
 	 * @returns converted speed, in knots.
 	 */
-	convertMphToKnots(mph)
-	{
+	convertMphToKnots(mph) {
 		return mph * 0.868976
 	},
-	
+
 	/**
 	 * Convert a given speed from knots to km/h.
 	 * 
 	 * @param {number} knots - speed, in knots.
 	 * @returns converted speed, in km/h.
 	 */
-	convertKnotsToKph(knots)
-	{
+	convertKnotsToKph(knots) {
 		return knots * 1.852
 	},
 
@@ -169,8 +174,7 @@ const FlightMath = {
 	 * @param {number} knots - speed, in knots.
 	 * @returns converted speed, in mph.
 	 */
-	convertKnotsToMph(knots)
-	{
+	convertKnotsToMph(knots) {
 		return knots * 1.15078
 	},
 
