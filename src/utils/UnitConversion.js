@@ -35,6 +35,10 @@ const UnitConversion = {
 				toKm: 1.852,
 				toMiles: 1.15078
 			}
+		},
+		volume: {
+			literToGallons: 0.264172,
+			gallonsToLiters: 3.78541
 		}
 	},
 
@@ -147,6 +151,41 @@ const UnitConversion = {
 					conversionValue = this.table.speed.kph.toKnots
 				else if (oldUnit === 'mph')
 					conversionValue = this.table.speed.mph.toKnots
+				break
+			default:
+				break
+		}
+
+		return conversionValue
+	},
+
+	/**
+	 * Get the conversion value to convert a volume from one given unit to another.
+	 * 
+	 * WARNING: MAKE SURE YOU ARE PASSING A IMPLEMENTED UNIT, AS PER DOCUMENTATION.
+	 * 
+	 * @param {string} newUnit New volume unit, accepts 'l', 'litres', 'liters' for liters 
+	 * or 'gal', 'gallons' for gallons.
+	 * @param {string} oldUnit Old volume unit, accepts 'l', 'litres', 'liters' for liters 
+	 * or 'gal', 'gallons' for gallons.
+	 * @returns Conversion value, simply multiply the current volume value by the conversion value.
+	 */
+	getVolumeConversionValue (newUnit, oldUnit) {
+		let conversionValue = 1
+		if (newUnit === oldUnit)
+			return conversionValue
+
+		switch (newUnit) {
+			case 'l':
+			case 'liters':
+			case 'litres':
+				if (oldUnit === 'gal' || oldUnit === 'gallons')
+					conversionValue = this.table.volume.gallonsToLiters
+				break
+			case 'gal':
+			case 'gallons':
+				if (oldUnit === 'l' || oldUnit === 'liters' || oldUnit === 'litres')
+					conversionValue = this.table.volume.literToGallons
 				break
 			default:
 				break

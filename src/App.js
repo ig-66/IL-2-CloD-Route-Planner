@@ -5,6 +5,7 @@ import Map from './components/Map';
 import Keybinds from './components/Keybinds';
 import TASCalculator from './components/TASCalculator';
 import RoutePlanner from './utils/RoutePlanner';
+import FuelCalculator from './components/FuelCalculator';
 
 const baseSpeed = 350
 const baseAltitude = 1000
@@ -23,6 +24,8 @@ function App() {
 	// Markers and Flight Legs:
 	const [flightLegs, setFlightLegs] = useState([]);
 	const [markers, setMarkers] = useState([]);
+
+	const [totalFlightTime, setTotalFlightTime] = useState(null)
 	
 	const routePlannerRef = useRef(null);
 
@@ -35,6 +38,14 @@ function App() {
 		setMapObj(routePlanner.getMapObj()) // Get the default map object
 		setImplementedMaps(routePlanner.getMaps())
 	}, [routePlanner]);
+
+	useEffect(() => {
+		let flightTime = 0
+		flightLegs.forEach((leg) => flightTime += leg.time)
+
+		setTotalFlightTime(flightTime)
+
+	}, [flightLegs])
 
 	function changeMap(mapName)
 	{
@@ -76,6 +87,7 @@ function App() {
 				initialAltitude={baseAltitude}
 				altitudeUnit={altitudeUnit}
 				/>
+			<FuelCalculator flightTime={totalFlightTime}/>
 			<Keybinds/>
 			<Map 
 				p_mapObj={mapObj}
