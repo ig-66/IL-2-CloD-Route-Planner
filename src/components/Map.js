@@ -10,6 +10,7 @@ const Map = ({ p_mapObj, p_flightLegs, p_markers, p_routePlanner, speedUnit, alt
 	const [mapObj, setMapObj] = React.useState(null);
 	const [mapBounds, setBounds] = React.useState(null);
 	const [mapCenter, setMapCenter] = React.useState(null);
+	const [currentZoom, setCurrentZoom] = React.useState(null);
 
 	useEffect(() => {
 		setMapObj(p_mapObj);
@@ -48,6 +49,7 @@ const Map = ({ p_mapObj, p_flightLegs, p_markers, p_routePlanner, speedUnit, alt
 			<ImageOverlay url={mapObj.map} bounds={mapBounds} />
 			<WaypointAdder p_routePlanner={p_routePlanner}/>
 			<WaypointRemover p_routePlanner={p_routePlanner}/>
+			<ZoomListener setZoom={setCurrentZoom} />
 			{p_markers.map((marker, index) => (
 				<WaypointMarker key={index} 
 					p_waypoint={marker}
@@ -56,7 +58,7 @@ const Map = ({ p_mapObj, p_flightLegs, p_markers, p_routePlanner, speedUnit, alt
 					speedUnit={speedUnit}
 					altitudeUnit={altitudeUnit}/>
 			))}
-			<FlightLegs p_flightLegs={p_flightLegs}/>
+			<FlightLegs p_flightLegs={p_flightLegs} zoom={currentZoom}/>
 			{p_flightLegs.map((leg, index) => (
 				<FlightLegLabel 
 					key={index} 
@@ -147,5 +149,21 @@ const WaypointRemover = ({ p_routePlanner }) => {
 	return null;
 };
 
+const ZoomListener = ({ setZoom }) => {
+	const map = useMap()
+
+	useEffect(() => {
+		setZoom(map.getZoom())
+
+		const handleZoom = () => setZoom(map.getZoom())
+		map.on("zoomend", handleZoom)
+
+		return () => {
+			map.off("zoomend", handleZoom)
+		}
+	}, [map, setZoom])
+
+	return null
+}
 
 export default Map;

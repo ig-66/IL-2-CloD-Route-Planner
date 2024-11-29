@@ -1,5 +1,5 @@
 import React from "react";
-import { Polyline } from "react-leaflet";
+import { Polygon, Polyline } from "react-leaflet";
 
 const degreesToRadians = (degrees) => (degrees * Math.PI) / 180
 
@@ -8,12 +8,14 @@ const calculateMidpoint = (start, end) => ({
 	lng: (start.lng + end.lng) / 2,
 })
 
-const createArrow = (start, end, heading) => {
+const createArrow = (start, end, heading, zoom) => {
 	const angle = degreesToRadians((heading * -1) - 90)
 
 	const midPoint = calculateMidpoint(start, end)
 
-	const arrowLength = 15
+	let adjustedZoom = zoom + 4
+
+	const arrowLength =  75 / adjustedZoom
 	const arrowHead = [
 		[
 			midPoint.lat + arrowLength * Math.sin(angle + Math.PI / 6),
@@ -29,7 +31,7 @@ const createArrow = (start, end, heading) => {
 	return arrowHead
 }
 
-const FlightLegs = ({ p_flightLegs }) => {
+const FlightLegs = ({ p_flightLegs, zoom }) => {
 	return (
 		<>
 			{p_flightLegs.map((flightLeg, index) => {
@@ -41,7 +43,7 @@ const FlightLegs = ({ p_flightLegs }) => {
 					[end.lat, end.lng]
 				]
 
-				const arrowPoints = createArrow(start, end, flightLeg.heading)
+				const arrowPoints = createArrow(start, end, flightLeg.heading, zoom)
 
 				return (
 					<React.Fragment key={index}>
@@ -52,9 +54,11 @@ const FlightLegs = ({ p_flightLegs }) => {
 							opacity={1}
 						/>
 
-						<Polyline
+						<Polygon
 							positions={arrowPoints}
 							color="black"
+							fillColor="black"
+							fillOpacity={1}
 							weight={2}
 							opacity={1}
 						/>
