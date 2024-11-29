@@ -1,4 +1,5 @@
 import React from 'react';
+import AppStyle from '../AppStyle';
 
 const Header = ({ currentMap, isMagnetic, 
 	speedUnit, altitudeUnit, distanceUnit, 
@@ -85,26 +86,12 @@ const Header = ({ currentMap, isMagnetic,
 			</select>
 			<a style={{ paddingInlineStart: '20px' }}></a> {/** spacing */}
 			<button 
-				style={{ 
-					backgroundColor: 'red',
-					color: 'white',
-					fontWeight: 'bolder',
-					borderRadius: 5,
-					padding: 2,
-					paddingInline: 7,
-				}}
+				style={AppStyle.button.cancel}
 				onClick={onRemoveAllWaypoints}
 			>Remove All Waypoints</button>
 			<a style={{ paddingInlineStart: '20px' }}></a> {/** spacing */}
 			<button 
-				style={{
-					backgroundColor: 'blue',
-					color: 'white',
-					fontWeight: 'bolder',
-					borderRadius: 5,
-					padding: 2,
-					paddingInline: 7,
-				}}
+				style={AppStyle.button.blue}
 				onClick={onRouteExport}
 			>Export Route</button>
 			<div style={{ display: 'inline-block', position: 'relative' }}>
@@ -120,18 +107,7 @@ const Header = ({ currentMap, isMagnetic,
 						cursor: 'pointer',
 					}}
 				/>
-				<button
-					style={{
-						backgroundColor: 'green',
-						color: 'white',
-						fontWeight: 'bolder',
-						borderRadius: 5,
-						padding: 2,
-						paddingInline: 7,
-					}}
-				>
-					Import Route
-				</button>
+				<button style={AppStyle.button.green}>Import Route</button>
 			</div>
 		</header>
 	);
