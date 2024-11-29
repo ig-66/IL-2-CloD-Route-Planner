@@ -290,11 +290,11 @@ class RoutePlanner {
 		isImportOk = true
 
 		// applying options
-		this.#markers = routeObj.markers
 		this.changeAltitudeUnit(routeObj.units.altitude)
 		this.changeSpeedUnit(routeObj.units.speed)
 		this.changeDistanceUnit(routeObj.units.distance)
-
+		
+		this.#markers = routeObj.markers
 		this.#calculateFlightLegs()
 
 		return isImportOk
