@@ -11,9 +11,12 @@ const Maps =
 		zoom: {
 			max: 2,
 			min: -2,
-			default: -1,
+			default: -2,
 		},
-		center: [3000, 2600],
+		center: {
+			lat: 2595,
+			lng: 2680
+		},
 		mapRatio: 13.7338063,
 	},
 	tobruk: {
@@ -23,10 +26,13 @@ const Maps =
 		magVariation: 1.5,
 		zoom: {
 			max: 2,
-			min: -64,
-			default: -64,
+			min: -3,
+			default: -2,
 		},
-		center: [4160, 4820],
+		center: {
+			lat: 4933,
+			lng: 4952
+		},
 		mapRatio: 26.284864,
 	},
 }

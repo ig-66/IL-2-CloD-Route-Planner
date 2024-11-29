@@ -51,7 +51,7 @@ function App() {
 
 	}, [flightLegs])
 
-	function changeMap(mapName)
+	function onChangeMap(mapName)
 	{
 		routePlanner.removeAllMarkers()
 		setMapObj(routePlanner.getMapObj(mapName))
@@ -63,11 +63,6 @@ function App() {
 			return
 		
 		setShowFileNameInput(true)
-	}
-
-	function onFileSave(fileName)
-	{
-		JsonFile.export(fileName, routePlanner.getRouteExportObject(mapObj.name, useMagneticHeading))
 	}
 
 	function onRouteImport (importedRoute)
@@ -103,7 +98,7 @@ function App() {
 				distanceUnit={distanceUnit}
 				onDistanceUnitSelect={(unit) => routePlanner.changeDistanceUnit(unit)}
 
-				onMapSelect={(mapName) => changeMap(mapName)}
+				onMapSelect={(mapName) => onChangeMap(mapName)}
 
 				onRemoveAllWaypoints={() => routePlanner.removeAllMarkers()}
 
@@ -121,14 +116,14 @@ function App() {
 			<FuelCalculator flightTime={totalFlightTime}/>
 			{ showFileNameInput ?
 				<FileName
-					onSaveFile={(fileName) => onFileSave(fileName)}
+					onSaveFile={(fileName) => JsonFile.export(fileName, routePlanner.getRouteExportObject(mapObj.name, useMagneticHeading))}
 					onCancel={() => setShowFileNameInput(false)} 
 					/>
 				: null
 			}
 			<Keybinds/>
 			<Map 
-				p_mapObj={mapObj}
+				mapObj={mapObj}
 				p_flightLegs={flightLegs}
 				p_markers={markers}
 				p_routePlanner={routePlanner}

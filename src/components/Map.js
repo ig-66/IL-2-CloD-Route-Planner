@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { MapContainer, ImageOverlay, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -6,18 +6,16 @@ import WaypointMarker from "./WaypointMarker";
 import FlightLegs from "./FlightLegs";
 import FlightLegLabel from "./FlightLegLabel";
 
-const Map = ({ p_mapObj, p_flightLegs, p_markers, p_routePlanner, speedUnit, altitudeUnit, distanceUnit, useMagneticHDG }) => {
-	const [mapObj, setMapObj] = React.useState(null);
+const Map = ({ mapObj, p_flightLegs, p_markers, p_routePlanner, speedUnit, altitudeUnit, distanceUnit, useMagneticHDG }) => {
 	const [mapBounds, setBounds] = React.useState(null);
 	const [mapCenter, setMapCenter] = React.useState(null);
 	const [currentZoom, setCurrentZoom] = React.useState(null);
+	const [currentPosition, setCurrentPosition] = React.useState({ lat: 0, lng: 0 })
+
+	const mapRef = useRef();
 
 	useEffect(() => {
-		setMapObj(p_mapObj);
-	}, [p_mapObj]);
-
-	useEffect(() => {
-		if (!mapObj) return;
+		if (!mapObj || mapObj === null) return;
 
 		const img = new Image();
 		img.src = mapObj.map;
@@ -26,6 +24,7 @@ const Map = ({ p_mapObj, p_flightLegs, p_markers, p_routePlanner, speedUnit, alt
 			const width = img.width;
 			const height = img.height;
 			setMapCenter(mapObj.center)
+			flyTo(mapObj.zoom.default, mapObj.center.lat, mapObj.center.lng)			
 			setBounds([
 				[0, 0],
 				[height, width]
@@ -33,10 +32,28 @@ const Map = ({ p_mapObj, p_flightLegs, p_markers, p_routePlanner, speedUnit, alt
 		};
 	}, [mapObj])
 
+	useEffect(() => {
+		// Can be used to get the best zoom options for the map
+		// console.log("Current map position:", currentPosition);
+	}, [currentPosition])
+	
+	useEffect(() => {
+		// Can be used to get where to place the maps' center
+		// console.log("Current map zoom:", currentZoom);
+	}, [currentZoom])
+
+	function flyTo(zoom, lat, lng) {
+		const map = mapRef.current; // Access the map instance
+		if (map) {
+			map.flyTo([lat, lng], zoom); // Smooth transition to coordinates and zoom level
+		}
+	}
+
 	if (!mapBounds || !mapCenter || !mapObj) return <a>Loading map ...</a>
 
 	return (
 		<MapContainer
+			ref={mapRef}
 			bounceAtZoomLimits={true}
 			center={mapCenter}
 			zoom={mapObj.zoom.default}
@@ -50,6 +67,7 @@ const Map = ({ p_mapObj, p_flightLegs, p_markers, p_routePlanner, speedUnit, alt
 			<WaypointAdder p_routePlanner={p_routePlanner}/>
 			<WaypointRemover p_routePlanner={p_routePlanner}/>
 			<ZoomListener setZoom={setCurrentZoom} />
+			<PositionListener setPosition={setCurrentPosition} />
 			{p_markers.map((marker, index) => (
 				<WaypointMarker key={index} 
 					p_waypoint={marker}
@@ -162,6 +180,25 @@ const ZoomListener = ({ setZoom }) => {
 			map.off("zoomend", handleZoom)
 		}
 	}, [map, setZoom])
+
+	return null
+}
+
+const PositionListener = ({ setPosition }) => {
+	const map = useMap()
+
+	useEffect(() => {
+		const handleMoveEnd = () => {
+			const center = map.getCenter()
+			setPosition({ lat: center.lat, lng: center.lng })
+		}
+
+		map.on("moveend", handleMoveEnd)
+
+		return () => {
+			map.off("moveend", handleMoveEnd)
+		}
+	}, [map, setPosition])
 
 	return null
 }
