@@ -6,8 +6,8 @@ import Keybinds from './components/Keybinds';
 import TASCalculator from './components/TASCalculator';
 import RoutePlanner from './utils/RoutePlanner';
 import FuelCalculator from './components/FuelCalculator';
-import File from './utils/JsonFile';
 import JsonFile from './utils/JsonFile';
+import FileName from './components/FileName';
 
 const baseSpeed = 350
 const baseAltitude = 1000
@@ -30,6 +30,8 @@ function App() {
 	const [totalFlightTime, setTotalFlightTime] = useState(null)
 	
 	const routePlannerRef = useRef(null);
+
+	const [showFileNameInput, setShowFileNameInput] = useState(false)
 
 	if (!routePlannerRef.current) {
 		routePlannerRef.current = new RoutePlanner(setFlightLegs, setMarkers, setSpeedUnit, setAltitudeUnit, setDistanceUnit, baseAltitude, baseSpeed);
@@ -60,7 +62,12 @@ function App() {
 		if (markers.length < 2)
 			return
 		
-		JsonFile.export(`il2_clod_route_${mapObj.name}`, routePlanner.getRouteExportObject(mapObj.name, useMagneticHeading))
+		setShowFileNameInput(true)
+	}
+
+	function onFileSave(fileName)
+	{
+		JsonFile.export(fileName, routePlanner.getRouteExportObject(mapObj.name, useMagneticHeading))
 	}
 
 	function onRouteImport (importedRoute)
@@ -112,6 +119,13 @@ function App() {
 				altitudeUnit={altitudeUnit}
 				/>
 			<FuelCalculator flightTime={totalFlightTime}/>
+			{ showFileNameInput ?
+				<FileName
+					onSaveFile={(fileName) => onFileSave(fileName)}
+					onCancel={() => setShowFileNameInput(false)} 
+					/>
+				: null
+			}
 			<Keybinds/>
 			<Map 
 				p_mapObj={mapObj}
