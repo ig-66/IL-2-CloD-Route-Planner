@@ -1,10 +1,11 @@
-import React from 'react'; // Importing Modules
+import React from 'react';
 
 const Header = ({ currentMap, isMagnetic, 
 	speedUnit, altitudeUnit, distanceUnit, 
 	speedUnitOptions, altitudeUnitOptions, distanceUnitOptions, mapOptions,
 	onMapSelect, onSpeedUnitSelect, onAltitudeUnitSelect, 
-	onDistanceUnitSelect, onHeadingTypeChange, onRemoveAllWaypoints }) => {
+	onDistanceUnitSelect, onHeadingTypeChange, onRemoveAllWaypoints,
+	onRouteExport, onRouteImport }) => {
 	
 	const handleMapChange = (event) => {
 		onMapSelect(event.target.value)
@@ -41,6 +42,11 @@ const Header = ({ currentMap, isMagnetic,
 				top: 0,
 				left: '50%',
 				transform: 'translateX(-50%)',
+				display: 'flex',
+				flexWrap: 'nowrap',
+				alignItems: 'center',
+				overflowX: 'auto',
+				whiteSpace: 'nowrap',
 			}}
 		>
 			<select value={currentMap} onChange={handleMapChange} style={{ marginInline: '3px' }}>
@@ -50,10 +56,12 @@ const Header = ({ currentMap, isMagnetic,
 					))
 				}
 			</select>
+			<a style={{ paddingInlineStart: '20px' }}></a> {/** spacing */}
 			<select value={isMagnetic} onChange={handleHeadingChange} style={{ marginInline: '3px' }}>
 				<option value={false}>True HDG</option>
 				<option value={true}>Magnetic HDG</option>
 			</select>
+			<a style={{ paddingInlineStart: '20px' }}></a> {/** spacing */}
 			<select value={speedUnit} onChange={handleSpeedUnitChange} style={{ marginInline: '3px' }}>
 				{
 					speedUnitOptions.map((unit, index) => (
@@ -75,6 +83,7 @@ const Header = ({ currentMap, isMagnetic,
 					))
 				}				
 			</select>
+			<a style={{ paddingInlineStart: '20px' }}></a> {/** spacing */}
 			<button 
 				style={{ 
 					backgroundColor: 'red',
@@ -86,6 +95,44 @@ const Header = ({ currentMap, isMagnetic,
 				}}
 				onClick={onRemoveAllWaypoints}
 			>Remove All Waypoints</button>
+			<a style={{ paddingInlineStart: '20px' }}></a> {/** spacing */}
+			<button 
+				style={{
+					backgroundColor: 'blue',
+					color: 'white',
+					fontWeight: 'bolder',
+					borderRadius: 5,
+					padding: 2,
+					paddingInline: 7,
+				}}
+				onClick={onRouteExport}
+			>Export Route</button>
+			<div style={{ display: 'inline-block', position: 'relative' }}>
+				<input
+					type="file"
+					accept=".json"
+					onChange={onRouteImport}
+					style={{
+						position: 'absolute',
+						opacity: 0,
+						width: '100%',
+						height: '100%',
+						cursor: 'pointer',
+					}}
+				/>
+				<button
+					style={{
+						backgroundColor: 'green',
+						color: 'white',
+						fontWeight: 'bolder',
+						borderRadius: 5,
+						padding: 2,
+						paddingInline: 7,
+					}}
+				>
+					Import Route
+				</button>
+			</div>
 		</header>
 	);
 }

@@ -6,6 +6,8 @@ import Keybinds from './components/Keybinds';
 import TASCalculator from './components/TASCalculator';
 import RoutePlanner from './utils/RoutePlanner';
 import FuelCalculator from './components/FuelCalculator';
+import File from './utils/JsonFile';
+import JsonFile from './utils/JsonFile';
 
 const baseSpeed = 350
 const baseAltitude = 1000
@@ -53,6 +55,25 @@ function App() {
 		setMapObj(routePlanner.getMapObj(mapName))
 	}
 
+	function onRouteExport ()
+	{
+		if (markers.length < 2)
+			return
+		
+		JsonFile.export(`il2_clod_route_${mapObj.name}`, routePlanner.getRouteExportObject(mapObj.name, useMagneticHeading))
+	}
+
+	function onRouteImport (importedRoute)
+	{
+		let wasSuccessful = routePlanner.applyRouteImportObject(importedRoute)
+		
+		if (!wasSuccessful)
+			return
+
+		setMapObj(routePlanner.getMapObj(importedRoute.map))
+		setUseMagneticHeading(importedRoute.useMagneticHDG)
+	}
+
 	if (mapObj === null || implementedMaps === null) return <div>Loading ...</div>
 
 	return (
@@ -80,6 +101,9 @@ function App() {
 				onRemoveAllWaypoints={() => routePlanner.removeAllMarkers()}
 
 				onHeadingTypeChange={(isMag) => setUseMagneticHeading(isMag)}
+
+				onRouteExport={onRouteExport}
+				onRouteImport={(e) => JsonFile.import(e, onRouteImport)}
 				/>
 			<TASCalculator 
 				initialSpeed={baseSpeed}

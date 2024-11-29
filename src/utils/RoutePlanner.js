@@ -88,8 +88,16 @@ class RoutePlanner {
 	 * @param {object} markerObj New properties of the marker.
 	 */
 	modifyMarker(id, markerObj) {
+		const newMarker = {
+			coord: {
+				lat: markerObj.coord.lat,
+				lng: markerObj.coord.lng
+			},
+			altitude: Number(markerObj.altitude),
+			speed_ias: Number(markerObj.speed_ias)
+		}
 		const updatedMarkers = [...this.#markers] // create a new array, once again weeee
-		updatedMarkers[id] = markerObj
+		updatedMarkers[id] = newMarker
 		this.#markers = updatedMarkers;
 		this.#calculateFlightLegs();
 	}
@@ -179,6 +187,117 @@ class RoutePlanner {
 			name,
 			displayName
 		}))
+	}
+
+	/**
+	 * Get the route export object.
+	 * 
+	 * @param {string} mapName Current map name.
+	 * @param {boolean} useMagneticHDG Whether or not to use magnetic or true heading.
+	 * @returns Route export object.
+	 */
+	getRouteExportObject(mapName, useMagneticHDG)
+	{
+		// {
+		// 	"map": "channel",
+		// 	"useMagneticHDG": true,
+		// 	"units": {
+		// 		"speed": "kph",
+		// 		"altitude": "m",
+		// 		"distance": "km"
+		// 		},
+		// 	"markers": []
+		// }
+
+		let routeExportObject = {
+			map: mapName,
+			useMagneticHDG: useMagneticHDG,
+			units: {
+				speed: this.#speedUnit,
+				altitude: this.#altitudeUnit,
+				distance: this.#distanceUnit
+			},
+			markers: this.#markers
+		}
+
+		return routeExportObject
+	}
+
+	/**
+	 * Apply the passed options
+	 * 
+	 * WARNING: BE AWARE THE ROUTE PLANNER OBJECT DOES NOT CONTROL MAGNETIC HEADING NOR
+	 * MAP SELECTION, THOSE MUST BE SET ELSEWHERE!
+	 * 
+	 * @param {object} routeObj Route object.
+	 * @returns true if not error, otherwise failed to export.
+	 */
+	applyRouteImportObject(routeObj)
+	{
+		let isImportOk = false
+
+		const requiredProperties = ['map', 'useMagneticHDG', 'units', 'markers']
+
+		for (const prop of requiredProperties) {
+			if (!routeObj.hasOwnProperty(prop))
+				return isImportOk
+		}
+
+		// check map options:
+		const availableMaps = this.getMaps().map(map => map.name)
+		if (!availableMaps.includes(routeObj.map))
+			return isImportOk
+
+		// check useMagnetic:
+		if (typeof(routeObj.useMagneticHDG) !== 'boolean')
+			return isImportOk
+
+		// check units:
+		const validSpeedUnits = ['kph', 'mph', 'knots']
+		const validAltitudeUnits = ['m', 'ft']
+		const validDistanceUnits = ['km', 'mi', 'nm']
+
+		if (!validSpeedUnits.includes(routeObj.units.speed))
+			return isImportOk
+
+		if (!validAltitudeUnits.includes(routeObj.units.altitude))
+			return isImportOk
+
+		if (!validDistanceUnits.includes(routeObj.units.distance))
+			return isImportOk
+
+		// check markers:
+		if (!Array.isArray(routeObj.markers))
+			return isImportOk
+
+		for (const marker of routeObj.markers) {
+			const { coord, altitude, speed_ias } = marker;
+
+			// coordinates
+			if (!coord || typeof coord.lat !== 'number' || coord.lat < 0 ||
+				typeof coord.lng !== 'number' || coord.lng < 0)
+				return isImportOk
+
+			// altitude
+			if (typeof altitude !== 'number' || altitude < 0)
+				return isImportOk
+
+			// speed
+			if (typeof speed_ias !== 'number' || speed_ias <= 0)
+				return isImportOk
+		}
+
+		isImportOk = true
+
+		// applying options
+		this.#markers = routeObj.markers
+		this.changeAltitudeUnit(routeObj.units.altitude)
+		this.changeSpeedUnit(routeObj.units.speed)
+		this.changeDistanceUnit(routeObj.units.distance)
+
+		this.#calculateFlightLegs()
+
+		return isImportOk
 	}
 
 	#calculateFlightLegs ()
