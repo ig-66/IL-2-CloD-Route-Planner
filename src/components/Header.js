@@ -42,12 +42,17 @@ const Header = ({ currentMap, isMagnetic,
 				borderRadius: '0 0 10px 10px',
 				top: 0,
 				left: '50%',
+				width: 980,
+				maxWidth: '80%',
+				marginInline: 15,
 				transform: 'translateX(-50%)',
 				display: 'flex',
-				flexWrap: 'nowrap',
+				flexWrap: 'wrap',
 				alignItems: 'center',
+				justifyContent: 'center',
 				overflowX: 'auto',
 				whiteSpace: 'nowrap',
+				rowGap: 10,
 			}}
 		>
 			<select value={currentMap} onChange={handleMapChange} style={{ marginInline: '3px' }}>

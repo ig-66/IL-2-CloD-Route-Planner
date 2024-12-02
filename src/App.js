@@ -2,12 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import Header from './components/Header';
 import Map from './components/Map';
-import Keybinds from './components/Keybinds';
+import HowToUse from './components/HowToUse';
 import TASCalculator from './components/TASCalculator';
 import RoutePlanner from './utils/RoutePlanner';
 import FuelCalculator from './components/FuelCalculator';
 import JsonFile from './utils/JsonFile';
 import FileName from './components/FileName';
+import HelperButtons from './components/HelperButtons';
 
 const baseSpeed = 350
 const baseAltitude = 1000
@@ -31,7 +32,11 @@ function App() {
 	
 	const routePlannerRef = useRef(null);
 
+	// Dynamic components
 	const [showFileNameInput, setShowFileNameInput] = useState(false)
+	const [showTASCalculator, setShowTASCalculator] = useState(false)
+	const [showFuelCalculator, setShowFuelCalculator] = useState(false)
+	const [showHowToUse, setShowHowToUse] = useState(false)
 
 	if (!routePlannerRef.current) {
 		routePlannerRef.current = new RoutePlanner(setFlightLegs, setMarkers, setSpeedUnit, setAltitudeUnit, setDistanceUnit, baseAltitude, baseSpeed);
@@ -57,14 +62,6 @@ function App() {
 		setMapObj(routePlanner.getMapObj(mapName))
 	}
 
-	function onRouteExport ()
-	{
-		if (markers.length < 2)
-			return
-		
-		setShowFileNameInput(true)
-	}
-
 	function onRouteImport (importedRoute)
 	{
 		let wasSuccessful = routePlanner.applyRouteImportObject(importedRoute)
@@ -74,6 +71,45 @@ function App() {
 
 		setMapObj(routePlanner.getMapObj(importedRoute.map))
 		setUseMagneticHeading(importedRoute.useMagneticHDG)
+	}
+
+	function openRouteExport()
+	{
+		if (markers.length < 2)
+			return
+
+		setShowFileNameInput(true)
+		
+		setShowTASCalculator(false)
+		setShowFuelCalculator(false)
+		setShowHowToUse(false)
+	}
+
+	function openTASCalculator()
+	{
+		setShowTASCalculator(true)
+
+		setShowFuelCalculator(false)
+		setShowHowToUse(false)
+		setShowFileNameInput(false)
+	}
+	
+	function openFuelCalculator()
+	{
+		setShowFuelCalculator(true)
+
+		setShowTASCalculator(false)
+		setShowHowToUse(false)
+		setShowFileNameInput(false)
+	}
+	
+	function openHowToUse()
+	{
+		setShowHowToUse(true)
+
+		setShowTASCalculator(false)
+		setShowFuelCalculator(false)
+		setShowFileNameInput(false)
 	}
 
 	if (mapObj === null || implementedMaps === null) return <div>Loading ...</div>
@@ -104,16 +140,32 @@ function App() {
 
 				onHeadingTypeChange={(isMag) => setUseMagneticHeading(isMag)}
 
-				onRouteExport={onRouteExport}
+				onRouteExport={openRouteExport}
 				onRouteImport={(e) => JsonFile.import(e, onRouteImport)}
 				/>
-			<TASCalculator 
-				initialSpeed={baseSpeed}
-				speedUnit={speedUnit}
-				initialAltitude={baseAltitude}
-				altitudeUnit={altitudeUnit}
-				/>
-			<FuelCalculator flightTime={totalFlightTime}/>
+			{ showTASCalculator ?
+				<TASCalculator 
+					initialSpeed={baseSpeed}
+					speedUnit={speedUnit}
+					initialAltitude={baseAltitude}
+					altitudeUnit={altitudeUnit}
+					onClose={() => setShowTASCalculator(false)}
+					/>
+				: null
+			}
+			{ showFuelCalculator ?
+				<FuelCalculator flightTime={totalFlightTime} onClose={() => setShowFuelCalculator(false)}/>
+				: null
+			}
+			{ showHowToUse ?
+				<HowToUse onClose={() => setShowHowToUse(false)}/>
+				: null
+			}
+			<HelperButtons 
+				onTASCalculatorToggle={openTASCalculator}
+				onFuelCalculatorToggle={openFuelCalculator}
+				onHowToUseToggle={openHowToUse}
+			/>
 			{ showFileNameInput ?
 				<FileName
 					onSaveFile={(fileName) => JsonFile.export(fileName, routePlanner.getRouteExportObject(mapObj.name, useMagneticHeading))}
@@ -121,7 +173,6 @@ function App() {
 					/>
 				: null
 			}
-			<Keybinds/>
 			<Map 
 				mapObj={mapObj}
 				p_flightLegs={flightLegs}

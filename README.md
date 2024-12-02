@@ -42,3 +42,9 @@ No downloads are necessary—simply access the tool through the link below:
 - **To Delete:**  
   Use the same method to access options, then select the "Remove Waypoint".
 
+## On Smartphones and Tablets
+- **To Add a Waypoint:**  
+  Long press in somewhere in the map.
+  
+- **To Remove a Waypoint:**  
+  Click on a waypoint, and then on the 'Remove Waypoint' button.

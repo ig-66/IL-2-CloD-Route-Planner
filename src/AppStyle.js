@@ -16,6 +16,20 @@ const AppStyle = {
 		zIndex: 10,
 		fontSize: 10
 	},
+	screenCenterLabel: {
+		position: 'absolute',
+		zIndex: 15,
+		backgroundColor: 'white',
+		padding: 7,
+		borderRadius: '10px',
+		top: '50%',
+		left: '50%',
+		transform: 'translate(-50%, -50%)',
+		pointerEvents: 'auto',
+		alignItems: 'center',
+		width: '400px',
+		maxWidth: '80%',
+	},
 	button: {
 		cancel: {
 			backgroundColor: 'red',

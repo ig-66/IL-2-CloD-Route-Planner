@@ -3,7 +3,7 @@ import AppStyle from "../AppStyle"
 import FlightMath from "../utils/FlightMath"
 import UnitConversion from "../utils/UnitConversion"
 
-const FuelCalculator = ({ flightTime }) => {
+const FuelCalculator = ({ flightTime, onClose }) => {
 
 	const [formatedTime, setFormatedTime] = useState(null)
 
@@ -59,18 +59,16 @@ const FuelCalculator = ({ flightTime }) => {
 
 	return (
 		<div style={{
-			...AppStyle.label,
-			width: '150px',
-			pointerEvents: 'auto',
-			position: 'absolute',
-			right: '7px',
-			top: '112px',
+			...AppStyle.screenCenterLabel,
+			top: '60%',
 			fontSize: 15,
-			lineHeight: '1.5',
+			width: 200,
+			paddingInline: 10,
+			lineHeight: 2,
 		}}>
 			<a style={{ textAlign: 'center', fontWeight: 'bold' }}>Fuel Calculator</a><br />
 			<div style={{ textAlign: 'left' }}>
-				<a>Flight Time: {formatedTime}</a><br/><br/>
+				<a>Flight Time: {formatedTime}</a><br/>
 				<a>Additional flight time: </a><br/>
 				<input 
 					type="number"
@@ -78,7 +76,7 @@ const FuelCalculator = ({ flightTime }) => {
 					size={2}
 					onChange={onAdditionalTime}
 					value={additionalTime}
-				/><a> minutes</a><br/><br/>
+				/><a> minutes</a><br/>
 				<a>Plane Fuel Consump.:</a><br/>
 				<input 
 					type="number"
@@ -90,7 +88,7 @@ const FuelCalculator = ({ flightTime }) => {
 				<select value={consumptionUnit} onChange={onConsumptionUnitChange}>
 					<option value={'L/h'}>L/h</option>
 					<option value={'gal/h'}>gal/h</option>
-				</select><br /><br />
+				</select><br />
 				<a>Required fuel amount:</a><br />
 				<a>{Math.round(requiredFuelAmount)} </a>
 				<select value={fuelUnit} onChange={onFuelUnitChange}>
@@ -98,6 +96,7 @@ const FuelCalculator = ({ flightTime }) => {
 					<option value={"gallons"}>Gallons</option>
 				</select>
 			</div>
+			<button style={AppStyle.button.cancel} onClick={onClose}>Close</button>
 		</div>
 	)
 }

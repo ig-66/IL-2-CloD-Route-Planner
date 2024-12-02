@@ -3,7 +3,7 @@ import AppStyle from '../AppStyle.js';
 import FlightMath from '../utils/FlightMath.js';
 import UnitConversion from '../utils/UnitConversion.js';
 
-const TASCalculator = ({ initialSpeed, speedUnit, initialAltitude, altitudeUnit }) => {
+const TASCalculator = ({ initialSpeed, speedUnit, initialAltitude, altitudeUnit, onClose }) => {
 	const [speed, setSpeed] = useState(initialSpeed)
 	const [altitude, setAltitude] = useState(initialAltitude);
 	
@@ -63,14 +63,13 @@ const TASCalculator = ({ initialSpeed, speedUnit, initialAltitude, altitudeUnit 
 
 	return (
 		<div style={{
-			...AppStyle.label,
+			...AppStyle.screenCenterLabel,
 			width: '150px',
+			top: '60%',
 			pointerEvents: 'auto',
 			position: 'absolute',
-			right: '7px',
-			top: '7px',
 			fontSize: 15,
-			lineHeight: '1.5',
+			lineHeight: 2,
 		}}>
 			<a style={{ textAlign: 'center', fontWeight: 'bold'}}>TAS Calculator</a><br/>
 			<div style={{textAlign: 'left'}}>
@@ -98,6 +97,7 @@ const TASCalculator = ({ initialSpeed, speedUnit, initialAltitude, altitudeUnit 
 				<a>TAS: {Math.round(TAS)} {speedUnit}</a>
 				<br/>
 			</div>
+			<button style={AppStyle.button.cancel} onClick={onClose}>Close</button>
 		</div>
 	)
 }
