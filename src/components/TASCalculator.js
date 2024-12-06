@@ -80,7 +80,9 @@ const TASCalculator = ({ initialSpeed, speedUnit, initialAltitude, altitudeUnit,
 					value={Math.round(altitude)}
 					onChange={handleAltitudeChange}
 					placeholder={altitude}
-					size={6}
+					min="0"
+					step="1"
+					style={{ width: 60 }}
 				/>
 				<a> {altitudeUnit}</a>
 				<br/>
@@ -91,7 +93,9 @@ const TASCalculator = ({ initialSpeed, speedUnit, initialAltitude, altitudeUnit,
 					value={Math.round(speed)}
 					onChange={handleSpeedChange}
 					placeholder={speed}
-					size={4}
+					min="0"
+					step="1"
+					style={{ width: 60 }}
 				/><a> {speedUnit}</a>
 				<br/>
 				<a>TAS: {Math.round(TAS)} {speedUnit}</a>

@@ -73,7 +73,9 @@ const FuelCalculator = ({ flightTime, onClose }) => {
 				<input 
 					type="number"
 					placeholder={additionalTime}
-					size={2}
+					min="0"
+					step="1"
+					style={{ width: 60 }}
 					onChange={onAdditionalTime}
 					value={additionalTime}
 				/><a> minutes</a><br/>
@@ -81,7 +83,9 @@ const FuelCalculator = ({ flightTime, onClose }) => {
 				<input 
 					type="number"
 					placeholder={Math.round(planeFuelConsuption)}
-					size={3}
+					min="0"
+					step="1"
+					style={{ width: 60 }}
 					onChange={(e) => setPlaneFuelConsumption(e.target.value)}
 					value={Math.round(planeFuelConsuption)}
 				/>
