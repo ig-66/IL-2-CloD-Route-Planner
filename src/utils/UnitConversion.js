@@ -6,15 +6,33 @@ const UnitConversion = {
 		speed: {
 			kph: {
 				toMph: 0.621371,
-				toKnots: 0.539957
+				toKnots: 0.539957,
+				toMeterPerSecond: 0.277778,
+				toFeetPerSecond: 0.539957
 			},
 			mph: {
 				tokph: 1.60934,
-				toKnots: 0.868976
+				toKnots: 0.868976,
+				toMeterPerSecond: 0.44704,
+				toFeetPerSecond: 1.46667
 			},
 			knots: {
 				toKph: 1.852,
-				toMph: 1.15078
+				toMph: 1.15078,
+				toMeterPerSecond: 0.514444,
+				toFeetPerSecond: 1.68781
+			},
+			meterPerSecond: {
+				toKph: 3.6,
+				toMph: 2.23694,
+				toKnots: 1.94384,
+				toFeetPerSecond: 3.28084
+			},
+			feetPerSecond: {
+				toKph: 1.09728,
+				toMph: 0.681818,
+				toKnots: 0.592484,
+				toMeterPerSecond: 0.3048
 			}
 		},
 		altitude:
@@ -120,43 +138,90 @@ const UnitConversion = {
 	 * 
 	 * WARNING: MAKE SURE YOU ARE PASSING A IMPLEMENTED UNIT, AS PER DOCUMENTATION.
 	 * 
-	 * @param {string} newUnit New speed unit, either 'kph', 'mph' or 'knots'.
-	 * @param {string} oldUnit Old/current speed unit, either 'kph', 'mph' or 'knots'.
-	 * @returns Conversion value, simply multiply the current speed value by the conversion value.
+	 * @param {string} newUnit New speed unit, either 'kph', 'mph', 'knots', 'm/s' or 'ft/s.
+	 * @param {string} oldUnit Old/current speed unit, either 'kph', 'mph', 'knots', 'm/s' or 'ft/s.
+	 * @returns Conversion value, simply multiply the current speed value by the conversion value; 
+	 * -1 is returned in case of error. 
 	 */
 	getSpeedConversionValue (newUnit, oldUnit) {
-		var conversionValue = 1
+
+		if (newUnit === oldUnit)
+			return 1
 
 		switch (newUnit) {
 			case 'kph':
-				if (oldUnit === 'kph')
-					break
-				else if (oldUnit === 'mph')
-					conversionValue = this.table.speed.mph.tokph
-				else if (oldUnit === 'knots')
-					conversionValue = this.table.speed.knots.toKph
-				break
+				switch (oldUnit) 
+				{
+					case 'mph':
+						return this.table.speed.mph.tokph
+					case 'knots':
+						return this.table.speed.knots.toKph
+					case 'm/s':
+						return this.table.speed.meterPerSecond.toKph
+					case 'ft/s':
+						return this.table.speed.feetPerSecond.toKph
+					default:
+						return -1
+				}
 			case 'mph':
-				if (oldUnit === 'mph')
-					break
-				else if (oldUnit === 'kph')
-					conversionValue = this.table.speed.kph.toMph
-				else if (oldUnit === 'knots')
-					conversionValue = this.table.speed.knots.toMph
-				break
+				switch (oldUnit) 
+				{
+					case 'kph':
+						return this.table.speed.kph.toMph
+					case 'knots':
+						return this.table.speed.knots.toMph
+					case 'm/:':
+						return this.table.speed.meterPerSecond.toMph
+					case 'ft/:':
+						return this.table.speed.feetPerSecond.toMph
+					default:
+						return -1
+				}
 			case 'knots':
-				if (oldUnit === 'knots')
-					break
-				else if (oldUnit === 'kph')
-					conversionValue = this.table.speed.kph.toKnots
-				else if (oldUnit === 'mph')
-					conversionValue = this.table.speed.mph.toKnots
-				break
+				switch (oldUnit)
+				{
+					case 'kph':
+						return this.table.speed.kph.toKnots
+					case 'mph':
+						return this.table.speed.mph.toKnots
+					case 'm/s':
+						return this.table.speed.meterPerSecond.toKnots
+					case 'ft/s':
+						return this.table.speed.feetPerSecond.toKnots
+					default:
+						return -1
+				}
+			case 'm/s':
+				switch (oldUnit)
+				{
+					case 'kph':
+						return this.table.speed.kph.toMeterPerSecond
+					case 'mph':
+						return this.table.speed.mph.toMeterPerSecond
+					case 'knots':
+						return this.table.speed.knots.toMeterPerSecond
+					case 'ft/s':
+						return this.table.speed.feetPerSecond.toMeterPerSecond
+					default:
+						return -1
+				}
+			case 'ft/s':
+				switch (oldUnit)
+				{
+					case 'kph':
+						return this.table.speed.kph.toFeetPerSecond
+					case 'mph':
+						return this.table.speed.mph.toFeetPerSecond
+					case 'knots':
+						return this.table.speed.knots.toFeetPerSecond
+					case 'm/s':
+						return this.table.speed.meterPerSecond.toFeetPerSecond
+					default:
+						return -1
+				}
 			default:
-				break
+				return -1
 		}
-
-		return conversionValue
 	},
 
 	/**
