@@ -29,9 +29,11 @@ function FlightLegs({ leg, id, distanceUnit, speedUnit, altitudeUnit, mapVariati
 		<div style="${style}">
 			<strong>${id + 1}</strong><br/>
 			<a style="${textStyle}">${Math.round(leg.heading + mapVariation) % 360}°</a><br/>
+			<a style="${textStyle}">WCA: ${Math.round(leg.wca)}°</a><br/>
 			<a style="${textStyle}">${Math.round(leg.distance)} ${distanceUnit}</a><br/>
 			<a style="${textStyle}">${Math.round(leg.altitude)} ${altitudeUnit}</a><br/>
 			<a style="${textStyle}">${Math.round(leg.speed)} ${speedUnit}</a><br/>
+			<a style="${textStyle}">TAS: ${Math.round(leg.tas)} ${speedUnit}</a><br/>
 			<a style="${textStyle}">${FlightMath.getLegTimeString(leg.time)}</a><br/>
 		</div>
 	`;

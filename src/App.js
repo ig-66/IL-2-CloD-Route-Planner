@@ -23,6 +23,26 @@ function App() {
 	const [speedUnit, setSpeedUnit] = useState('kph')
 	const [altitudeUnit, setAltitudeUnit] = useState('m')
 	const [distanceUnit, setDistanceUnit] = useState('km')
+	const [windSpeedUnit, setWindSpeedUnit] = useState('m/s')
+	const [windSpeed, setWindSpeed] = useState(0)
+	const [windHDG, setWindHDG] = useState(0)
+
+	const [wind, setWind] = useState({})
+	
+	useEffect(() => {
+		let newWind = {}
+		newWind.unit = windSpeedUnit
+		newWind.setUnit = setWindSpeedUnit
+		newWind.speed = windSpeed
+		newWind.setSpeed = setWindSpeed
+		newWind.heading = windHDG
+		newWind.setHeading = setWindHDG
+
+		setWind(newWind)
+
+		routePlanner.updateWind(newWind)
+
+	}, [windSpeedUnit, windSpeed, windHDG])
 
 	// Markers and Flight Legs:
 	const [flightLegs, setFlightLegs] = useState([]);
@@ -39,7 +59,7 @@ function App() {
 	const [showHowToUse, setShowHowToUse] = useState(false)
 
 	if (!routePlannerRef.current) {
-		routePlannerRef.current = new RoutePlanner(setFlightLegs, setMarkers, setSpeedUnit, setAltitudeUnit, setDistanceUnit, baseAltitude, baseSpeed);
+		routePlannerRef.current = new RoutePlanner(setFlightLegs, setMarkers, setSpeedUnit, setAltitudeUnit, setDistanceUnit, wind, baseAltitude, baseSpeed);
 	}
 	const routePlanner = routePlannerRef.current;
 
@@ -142,6 +162,9 @@ function App() {
 
 				onRouteExport={openRouteExport}
 				onRouteImport={(e) => JsonFile.import(e, onRouteImport)}
+
+				wind={wind}
+				windSpeedOptions={['m/s', 'ft/s','kph', 'mph', 'knots']}
 				/>
 			{ showTASCalculator ?
 				<TASCalculator 

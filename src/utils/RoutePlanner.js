@@ -9,6 +9,7 @@ class RoutePlanner {
 	#speedUnit = 'kph'
 	#altitudeUnit = 'm'
 	#distanceUnit = 'km'
+	#windObj = {}
 
 	/**
 	 * 
@@ -21,7 +22,7 @@ class RoutePlanner {
 	 * @param {number} defaultAltitude Initial/default altitude. 
 	 * @param {number} defaultAirspeed Initial/defualt speed.
 	 */
-	constructor(setFlightLegCb, setMarkerCb, setSpeedUnitCb, setAltitudeUnitCb, setDistanceUnitCb, defaultAltitude = 1000, defaultAirspeed = 400) {
+	constructor(setFlightLegCb, setMarkerCb, setSpeedUnitCb, setAltitudeUnitCb, setDistanceUnitCb, windObj, defaultAltitude = 1000, defaultAirspeed = 400) {
 		this.setNewFlightLegs = setFlightLegCb
 		this.setNewMarkers = setMarkerCb
 		this.setSpeedUnit = setSpeedUnitCb
@@ -29,6 +30,7 @@ class RoutePlanner {
 		this.setDistanceUnit = setDistanceUnitCb
 		this.defaultAltitude = defaultAltitude
 		this.defaultAirspeed = defaultAirspeed
+		this.#windObj = windObj
 
 		this.mapRatio = this.getMapObj().mapRatio
 	}
@@ -111,6 +113,13 @@ class RoutePlanner {
 		this.#calculateFlightLegs()
 	}
 
+	/**
+	 * Change speed unit.
+	 * 
+	 * Flight legs are updated.
+	 * 
+	 * @param {string} speedUnit Either 'kph', 'mph' or 'knots'.
+	 */
 	changeSpeedUnit(speedUnit)
 	{
 		var newMarkers = this.#markers.map((marker) => ({
@@ -126,6 +135,13 @@ class RoutePlanner {
 		this.#calculateFlightLegs()
 	}
 
+	/**
+	 * Change the altitude unit.
+	 * 
+	 * Flight legs are updated.
+	 * 
+	 * @param {string} altitudeUnit Either 'm' or 'ft'.
+	 */
 	changeAltitudeUnit(altitudeUnit)
 	{
 		// convert on markers
@@ -142,6 +158,13 @@ class RoutePlanner {
 		this.#calculateFlightLegs()
 	}
 
+	/**
+	 * Change the distance unit.
+	 * 
+	 * Flight legs are updated.
+	 * 
+	 * @param {string} distanceUnit Either 'km', 'mi' or 'nm'.
+	 */
 	changeDistanceUnit(distanceUnit)
 	{
 		// convert on flight legs
@@ -221,6 +244,19 @@ class RoutePlanner {
 		}
 
 		return routeExportObject
+	}
+
+	/**
+	 * Update the wind object in the route planner.
+	 * 
+	 * 
+	 * 
+	 * @param {object} windObject Wind Object. 
+	 */
+	updateWind (windObject)
+	{
+		this.#windObj = windObject
+		this.#calculateFlightLegs()
 	}
 
 	/**
@@ -330,6 +366,12 @@ class RoutePlanner {
 
 			let altitude = index >= this.#markers.length || !this.#markers[index] ? this.defaultAltitude : this.#markers[index].altitude
 			
+			let tas = FlightMath.calculateTAS(altitude, this.#altitudeUnit, speed)
+
+			let convertedWindSpeed = this.#windObj.speed * UnitConversion.getSpeedConversionValue(this.#speedUnit, this.#windObj.unit)
+
+			let windCorrectionAngle = FlightMath.getWindCorrectionAngle(tas, heading, convertedWindSpeed, this.#windObj.heading) 
+			
 			let time = FlightMath.getLegTimeSeconds(convertedDistance, FlightMath.calculateTAS(altitude, this.#altitudeUnit, convertedSpeed))
 
 			let newFlightLeg = {
@@ -348,6 +390,8 @@ class RoutePlanner {
 				distance: distance,
 				altitude: altitude,
 				speed: speed,
+				tas: tas,
+				wca: windCorrectionAngle,
 				time: time,
 			}
 

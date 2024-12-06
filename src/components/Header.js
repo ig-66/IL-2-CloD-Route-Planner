@@ -6,7 +6,7 @@ const Header = ({ currentMap, isMagnetic,
 	speedUnitOptions, altitudeUnitOptions, distanceUnitOptions, mapOptions,
 	onMapSelect, onSpeedUnitSelect, onAltitudeUnitSelect, 
 	onDistanceUnitSelect, onHeadingTypeChange, onRemoveAllWaypoints,
-	onRouteExport, onRouteImport }) => {
+	onRouteExport, onRouteImport,  windSpeedOptions, wind }) => {
 	
 	const handleMapChange = (event) => {
 		onMapSelect(event.target.value)
@@ -42,7 +42,7 @@ const Header = ({ currentMap, isMagnetic,
 				borderRadius: '0 0 10px 10px',
 				top: 0,
 				left: '50%',
-				width: 980,
+				width: 1700,
 				maxWidth: '80%',
 				marginInline: 15,
 				transform: 'translateX(-50%)',
@@ -55,65 +55,121 @@ const Header = ({ currentMap, isMagnetic,
 				rowGap: 10,
 			}}
 		>
-			<select value={currentMap} onChange={handleMapChange} style={{ marginInline: '3px' }}>
+			{/* MAP SELECT */}
+			<select value={currentMap} onChange={handleMapChange} style={{ marginRight: 5 }}>
 				{
 					mapOptions.map((mapOption, index) => (
 						<option key={index} value={mapOption.name}>{mapOption.displayName}</option>
 					))
 				}
 			</select>
-			<a style={{ paddingInlineStart: '20px' }}></a> {/** spacing */}
-			<select value={isMagnetic} onChange={handleHeadingChange} style={{ marginInline: '3px' }}>
+
+			{/* HEADING */}
+			<select value={isMagnetic} onChange={handleHeadingChange} style={{ marginInline: 5 }}>
 				<option value={false}>True HDG</option>
 				<option value={true}>Magnetic HDG</option>
 			</select>
-			<a style={{ paddingInlineStart: '20px' }}></a> {/** spacing */}
-			<select value={speedUnit} onChange={handleSpeedUnitChange} style={{ marginInline: '3px' }}>
-				{
-					speedUnitOptions.map((unit, index) => (
-						<option key={index} value={unit}>Speed {unit}</option>
-					))
-				}
-			</select>
-			<select value={altitudeUnit} onChange={handleAltUnitChange} style={{ marginInline: '3px' }}>
-				{
-					altitudeUnitOptions.map((unit, index) => (
-						<option key={index} value={unit}>Altitude {unit}</option>
-					))
-				}
-			</select>
-			<select value={distanceUnit} onChange={handleDistanceUnitChange} style={{ marginInline: '3px' }}>
-				{
-					distanceUnitOptions.map((unit, index) => (
-						<option key={index} value={unit}>Distance {unit}</option>
-					))
-				}				
-			</select>
-			<a style={{ paddingInlineStart: '20px' }}></a> {/** spacing */}
+
+			{/* UNITS */}
+			<div>
+				<select value={speedUnit} onChange={handleSpeedUnitChange} style={{ marginLeft: 5, marginRight: 1 }}>
+					{
+						speedUnitOptions.map((unit, index) => (
+							<option key={index} value={unit}>Speed {unit}</option>
+						))
+					}
+				</select>
+				<select value={altitudeUnit} onChange={handleAltUnitChange} style={{ marginInline: 1 }}>
+					{
+						altitudeUnitOptions.map((unit, index) => (
+							<option key={index} value={unit}>Altitude {unit}</option>
+						))
+					}
+				</select>
+				<select value={distanceUnit} onChange={handleDistanceUnitChange} style={{ marginInline: 1 }}>
+					{
+						distanceUnitOptions.map((unit, index) => (
+							<option key={index} value={unit}>Distance {unit}</option>
+						))
+					}				
+				</select>
+			</div>
+
+			{/* WIND SPEED */}
+			<div style={{ marginInline: 5 }}>
+				<a>Wind Speed: </a>
+				{/* <input 
+					type='number'
+					onChange={(e) => wind.setSpeed(e.target.value >= 0 ? e.target.value : 0)}
+					placeholder={0}
+					value={wind.speed}
+					size={1}
+				/> */}
+				<input
+					type="number"
+					onChange={(e) => wind.setSpeed(e.target.value >= 0 ? e.target.value : 0)}
+					placeholder="0"
+					value={wind.speed}
+					min="0"
+					step="1"
+					style={{ width: 35 }}
+				/>
+				
+				<select onChange={(e) => wind.setUnit(e.target.value)}>
+					{
+						windSpeedOptions.map((unit, index) => (
+							<option key={index} value={unit}>{unit}</option>
+							))
+						}	
+				</select>
+			</div>
+			
+			{/* WIND HEADING */}
+			<div style={{ marginInline: 5 }}>
+				<a> Wind from: </a>
+				<input 
+					type='number'
+					onChange={(e) => wind.setHeading(e.target.value >= 0 ? e.target.value % 360 : 359)}
+					placeholder={0}
+					value={wind.heading}
+					// size={2}
+					min="0"
+					step="1"
+					style={{ width: 35 }}
+				/>
+			</div>
+
+			{/* REMOVE ALL WAYPOINTS */}
 			<button 
-				style={AppStyle.button.cancel}
+				style={{ ...AppStyle.button.cancel, marginInline: 10 }}
 				onClick={onRemoveAllWaypoints}
 			>Remove All Waypoints</button>
-			<a style={{ paddingInlineStart: '20px' }}></a> {/** spacing */}
-			<button 
-				style={AppStyle.button.blue}
-				onClick={onRouteExport}
-			>Export Route</button>
-			<div style={{ display: 'inline-block', position: 'relative' }}>
-				<input
-					type="file"
-					accept=".json"
-					onChange={onRouteImport}
-					style={{
-						position: 'absolute',
-						opacity: 0,
-						width: '100%',
-						height: '100%',
-						cursor: 'pointer',
-					}}
-				/>
-				<button style={AppStyle.button.green}>Import Route</button>
+
+			{/* SAVE/LOAD ROUTE */}
+			<div style={{ marginLeft: 10 }}>
+
+				<button 
+					style={{ ...AppStyle.button.blue }}
+					onClick={onRouteExport}
+				>Save File</button>
+
+				<div style={{ display: 'inline-block', position: 'relative' }}>
+					<input
+						type="file"
+						accept=".json"
+						onChange={onRouteImport}
+						style={{
+							position: 'absolute',
+							opacity: 0,
+							width: '100%',
+							height: '100%',
+							cursor: 'pointer',
+						}}
+					/>
+					<button style={AppStyle.button.green}>Load File</button>
+				</div>
 			</div>
+
 		</header>
 	);
 }

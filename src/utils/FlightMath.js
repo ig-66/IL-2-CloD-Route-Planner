@@ -10,6 +10,16 @@ function radiansToDegrees(radians) {
 	return (degrees + 360) % 360;
 }
 
+/**
+ * Convert an angle from degrees to radians.
+ * 
+ * @param {number} degrees - angle in degrees.
+ * @returns Angle in radians.
+ */
+function degreesToRadians(degrees) {
+	return degrees * (Math.PI / 180)
+}
+
 const FlightMath = {
 	/**
 	 * Get the leg distance, in kilometers or mile, with the given coordinates.
@@ -206,6 +216,32 @@ const FlightMath = {
 			tas = ias * (((this.convertFeetToMeter(altitude) / 500) * 0.03) + 1)
 
 		return tas;
+	},
+
+	/**
+	 * Get the wind correction angle.
+	 * 
+	 * @param {number} tas True airspeed of the airplane. 
+	 * @param {number} desiredHDG Desired heading.
+	 * @param {number} windSpeed Wind speed, in the same unit as the given airplane TAS.
+	 * @param {number} windHDG Wind heading. Where the wind is blowing to.
+	 * @returns The correction angle.
+	 */
+	getWindCorrectionAngle(tas, desiredHDG, windSpeed, windHDG)
+	{
+		// let windAngle = (desiredHDG - (180 - windHDG)) % 360
+		let windAngle = (desiredHDG - windHDG) % 360
+
+		let windAngle_radians = degreesToRadians(windAngle)
+
+		let windCorrectionAngle_radians = Math.asin((windSpeed / tas) * Math.sin(windAngle_radians))
+
+		let windCorrectionAngle = 360 - (radiansToDegrees(windCorrectionAngle_radians) % 360)
+
+		if (windCorrectionAngle > 180)
+			windCorrectionAngle = windCorrectionAngle - 360
+
+		return windCorrectionAngle
 	},
 
 	/**
