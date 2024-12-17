@@ -98,13 +98,6 @@ const Header = ({ currentMap, isMagnetic,
 			{/* WIND SPEED */}
 			<div style={{ marginInline: 5 }}>
 				<a>Wind Speed: </a>
-				{/* <input 
-					type='number'
-					onChange={(e) => wind.setSpeed(e.target.value >= 0 ? e.target.value : 0)}
-					placeholder={0}
-					value={wind.speed}
-					size={1}
-				/> */}
 				<input
 					type="number"
 					onChange={(e) => wind.setSpeed(e.target.value >= 0 ? e.target.value : 0)}
@@ -132,10 +125,8 @@ const Header = ({ currentMap, isMagnetic,
 					onChange={(e) => wind.setHeading(e.target.value >= 0 ? e.target.value % 360 : 359)}
 					placeholder={0}
 					value={wind.heading}
-					// size={2}
-					min="0"
 					step="1"
-					style={{ width: 35 }}
+					style={{ width: 42 }}
 				/>
 			</div>
 
